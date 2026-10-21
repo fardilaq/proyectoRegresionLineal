@@ -1,0 +1,11 @@
+"Escenario","Fabricante","capacidad_bateria","antiguedad_bateria","resolucion_pantalla","apps_segundo_plano","uso_gps","ahorro_energia","brillo_pantalla","tiempo_pantalla_encendida","contactos_guardados","volumen_timbre","bluetooth","notificaciones","modo_oscuro","temperatura_C","color_dispositivo_Blanco","color_dispositivo_Azul","tipo_conectividad_4G","tipo_conectividad_5G","dia_semana_martes","dia_semana_miercoles","dia_semana_jueves","dia_semana_viernes","dia_semana_sabado","dia_semana_domingo"
+1,"TitanCell",5800,4,540,16,1,0,90,9.5,150,70,1,55,1,27,0,0,0,1,0,0,0,0,1,0
+2,"EcoPhone",2500,20,280,3,0,1,30,2.5,90,40,0,12,0,22,1,0,0,0,1,0,0,0,0,0
+3,"BudgetMax",3000,15,300,6,0,0,50,4,120,55,0,20,0,24,0,1,1,0,0,1,0,0,0,0
+4,"ProBusiness",4500,8,420,10,0,0,45,6,400,30,1,35,1,21,0,0,0,0,0,0,0,0,0,0
+5,"CamSnap",5000,3,520,9,1,0,75,5.5,180,50,1,25,0,26,1,0,0,1,0,0,0,0,0,1
+6,"RuggedX",5800,30,340,5,1,1,80,3,100,80,0,15,0,33,0,0,1,0,0,0,1,0,0,0
+7,"SocialTrend",4200,6,460,15,0,0,85,10,300,65,1,60,1,25,0,1,0,1,0,0,0,1,0,0
+8,"SeniorEasy",3200,24,310,2,0,1,40,1.5,50,90,0,8,0,23,1,0,0,0,0,0,0,0,0,1
+9,"MidRange",4000,12,400,8,0,0,55,5,180,50,0,30,0,23,0,0,1,0,0,1,0,0,0,0
+10,"ColdZone",5200,10,440,9,1,0,50,6,200,45,1,28,1,9,0,0,0,0,0,0,0,0,0,0
