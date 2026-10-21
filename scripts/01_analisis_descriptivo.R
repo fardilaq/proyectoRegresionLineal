@@ -1,8 +1,8 @@
-# 00_preparar_datos.R
-# Lectura de los datos y conversión de variables categóricas.
+# 01_analisis_descriptivo.R
+# Análisis descriptivo de los datos.
 #
 # Uso: desde la raíz del repo (directorio de trabajo = raíz),
-#   source("scripts/00_preparar_datos.R")
+#   source("scripts/01_analisis_descriptivo.R")
 # Deja en el entorno: `datos` (1000 dispositivos) y `escenarios`
 # (10 fabricantes), ambos con las categóricas ya convertidas.
 
