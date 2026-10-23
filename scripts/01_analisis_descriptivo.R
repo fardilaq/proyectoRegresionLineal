@@ -199,3 +199,28 @@ cat("\n== 10 pares con mayor correlación absoluta ==\n")
 pares <- cor_largo[as.integer(cor_largo$var1) < match(cor_largo$var2, numericas), ]
 pares <- pares[order(-abs(pares$r)), ]
 print(head(pares, 10), row.names = FALSE)
+
+# 14. Matriz de correlaciones con variables 0/1
+vars_corr <- c(numericas, binarias)
+correlaciones_ext <- cor(datos[vars_corr])
+write.csv(round(correlaciones_ext, 3), file.path(dir_tablas, "correlaciones_con_binarias.csv"),
+          fileEncoding = "UTF-8")
+
+cor_ext_largo <- as.data.frame(as.table(correlaciones_ext))
+names(cor_ext_largo) <- c("var1", "var2", "r")
+cor_ext_largo$var1 <- factor(cor_ext_largo$var1, levels = vars_corr)
+cor_ext_largo$var2 <- factor(cor_ext_largo$var2, levels = rev(vars_corr))
+
+g_cor_ext <- ggplot(cor_ext_largo, aes(x = var1, y = var2, fill = r)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sprintf("%.2f", r)), size = 2.8) +
+  scale_fill_gradient2(low = "#C44E52", mid = "white", high = "#4C72B0", limits = c(-1, 1)) +
+  labs(title = "Correlación entre variables numéricas y binarias (0/1)",
+       x = NULL, y = NULL, fill = "r") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(file.path(dir_graficas, "correlaciones_con_binarias.png"), g_cor_ext,
+       width = 12, height = 10, dpi = 300)
+
+cat("\n== Correlación de las variables 0/1 con duracion_bateria ==\n")
+print(round(correlaciones_ext[binarias, "duracion_bateria"], 3))
