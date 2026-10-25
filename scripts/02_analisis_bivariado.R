@@ -190,7 +190,7 @@ cat("\n== Diferencias de medias ==\n")
 for (v in binarias) {
   tt <- t.test(y ~ datos[[v]])
   cat(sprintf("%-16s dif(1-0) = %+6.2f h   p = %.4g\n",
-              v, -diff(tt$estimate), tt$p.value))
+              v, diff(tt$estimate), tt$p.value))
 }
 for (v in categoricas) {
   av <- anova(lm(y ~ datos[[v]]))
@@ -233,3 +233,50 @@ cat("apps:uso_gps           coef =", round(coef(m2)[4], 4),
     " p =", signif(summary(m2)$coefficients[4, 4], 4), "\n")
 
 cat("\n== Figuras en", dir_graficas, "y tablas en", dir_tablas, "==\n")
+
+# 7. Forma funcional final por variable
+forma_final <- c(capacidad_bateria = "lineal", antiguedad_bateria = "log",
+                 resolucion_pantalla = "lineal", apps_segundo_plano = "lineal",
+                 brillo_pantalla = "lineal", tiempo_pantalla_encendida = "lineal",
+                 contactos_guardados = "lineal", volumen_timbre = "lineal",
+                 notificaciones = "lineal", temperatura_C = "cuadratica")
+
+justificacion <- c(
+  capacidad_bateria = "Las 4 formas son casi identicas",
+  antiguedad_bateria = "Mayor R2 ajustado; cae rapido y se aplana, como indica el enunciado",
+  resolucion_pantalla = "Las 4 formas son casi identicas",
+  apps_segundo_plano = "Mejora de log insignificante; se queda por la interaccion con uso_gps",
+  brillo_pantalla = "Mejora de la cuadratica insignificante; se queda por la interaccion con ahorro_energia",
+  tiempo_pantalla_encendida = "Mejora de la cuadratica pequena y no significativa",
+  contactos_guardados = "Sin relacion visible con la duracion; candidata a salir del modelo",
+  volumen_timbre = "Sin relacion visible con la duracion; candidata a salir del modelo",
+  notificaciones = "Mejora de la cuadratica pequena y no significativa",
+  temperatura_C = "Optimo intermedio cerca de 21.5 C; centrar la variable para reducir colinealidad con su cuadrado")
+
+p_cuadratico <- sapply(numericas, function(v) {
+  m <- lm(as.formula(sprintf("%s ~ %s + I(%s^2)", resp, v, v)), data = datos)
+  summary(m)$coefficients[3, 4]
+})
+
+tabla_final <- data.frame(
+  variable = numericas,
+  forma_final = unname(forma_final[numericas]),
+  R2adj_forma_final = mapply(function(v, f) tabla_ff[tabla_ff$variable == v, paste0("R2adj_", f)],
+                             numericas, forma_final[numericas]),
+  R2adj_lineal = tabla_ff$R2adj_lineal,
+  p_termino_cuadratico = signif(p_cuadratico, 3),
+  justificacion = unname(justificacion[numericas]),
+  row.names = NULL)
+
+cat("\n== Forma funcional final ==\n")
+print(tabla_final[, 1:5], row.names = FALSE)
+write.csv(tabla_final, file.path(dir_tablas, "bivariado_forma_funcional_final.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
+
+codificacion_cat <- data.frame(
+  variable = c("uso_gps", "ahorro_energia", "bluetooth", "modo_oscuro",
+               "tipo_conectividad", "color_dispositivo", "dia_semana"),
+  codificacion = c(rep("0/1", 4), "2 indicadoras", "2 indicadoras", "6 indicadoras"))
+
+write.csv(codificacion_cat, file.path(dir_tablas, "bivariado_codificacion_categoricas.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
