@@ -1,0 +1,4 @@
+"interaccion","coeficiente","error_est","t","p_valor"
+"brillo_pantalla x ahorro_energia",0.04631,0.02048,2.261,0.02398
+"apps_segundo_plano x uso_gps",-0.3693,0.1295,-2.851,0.004441
+"brillo_pantalla x bluetooth",0.003008,0.01816,0.1656,0.8685

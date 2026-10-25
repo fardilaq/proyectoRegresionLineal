@@ -280,3 +280,61 @@ codificacion_cat <- data.frame(
 
 write.csv(codificacion_cat, file.path(dir_tablas, "bivariado_codificacion_categoricas.csv"),
           row.names = FALSE, fileEncoding = "UTF-8")
+
+# 8. Tablas de diferencias de medias
+dif_binarias <- do.call(rbind, lapply(binarias, function(v) {
+  tt <- t.test(y ~ datos[[v]])
+  data.frame(variable = v,
+             media_0 = unname(tt$estimate[1]), media_1 = unname(tt$estimate[2]),
+             dif_1_menos_0 = unname(diff(tt$estimate)),
+             ic95_inf = -tt$conf.int[2], ic95_sup = -tt$conf.int[1],
+             p_welch = tt$p.value)
+}))
+dif_binarias[2:6] <- round(dif_binarias[2:6], 3)
+dif_binarias$p_welch <- signif(dif_binarias$p_welch, 3)
+cat("\n== Diferencias de medias: binarias (Welch) ==\n")
+print(dif_binarias, row.names = FALSE)
+write.csv(dif_binarias, file.path(dir_tablas, "bivariado_diferencias_binarias.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
+
+anova_cat <- do.call(rbind, lapply(categoricas, function(v) {
+  m <- lm(y ~ datos[[v]])
+  av <- anova(m)
+  data.frame(variable = v, niveles = nlevels(datos[[v]]),
+             F = av$`F value`[1], p_anova = av$`Pr(>F)`[1],
+             R2 = summary(m)$r.squared)
+}))
+anova_cat[-1] <- signif(anova_cat[-1], 4)
+cat("\n== ANOVA: categoricas ==\n")
+print(anova_cat, row.names = FALSE)
+write.csv(anova_cat, file.path(dir_tablas, "bivariado_anova_categoricas.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
+
+# 9. Interacción brillo_pantalla x bluetooth
+g_i3 <- ggplot(datos, aes(x = brillo_pantalla, y = duracion_bateria,
+                          color = bluetooth_f)) +
+  geom_point(alpha = 0.25, size = 0.9) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 1.1) +
+  scale_color_manual(values = c(No = AZUL, Si = ROJO), name = "bluetooth") +
+  labs(title = "Interaccion brillo_pantalla x bluetooth",
+       x = "brillo_pantalla (%)", y = "duracion_bateria (h)") +
+  theme_minimal()
+ggsave(file.path(dir_graficas, "interaccion_brillo_bluetooth.png"), g_i3,
+       width = 7.5, height = 5, dpi = 300)
+
+# 10. Tabla de interacciones
+m3 <- lm(duracion_bateria ~ brillo_pantalla * bluetooth, data = datos)
+extraer_inter <- function(modelo, nombre) {
+  s <- summary(modelo)$coefficients
+  k <- nrow(s)
+  data.frame(interaccion = nombre, coeficiente = s[k, 1], error_est = s[k, 2],
+             t = s[k, 3], p_valor = s[k, 4])
+}
+tabla_inter <- rbind(extraer_inter(m1, "brillo_pantalla x ahorro_energia"),
+                     extraer_inter(m2, "apps_segundo_plano x uso_gps"),
+                     extraer_inter(m3, "brillo_pantalla x bluetooth"))
+tabla_inter[-1] <- signif(tabla_inter[-1], 4)
+cat("\n== Terminos de interaccion ==\n")
+print(tabla_inter, row.names = FALSE)
+write.csv(tabla_inter, file.path(dir_tablas, "bivariado_interacciones.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
