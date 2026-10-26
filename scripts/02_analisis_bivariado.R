@@ -15,7 +15,7 @@ library(ggplot2)
 
 ruta_xlsx     <- "datos/DatosProyectoRL_Android_202620.xlsx"
 dir_graficas  <- "resultados/graficas/bivariado"
-dir_tablas    <- "resultados/tablas"
+dir_tablas    <- "resultados/tablas/bivariado"
 dir.create(dir_graficas, recursive = TRUE, showWarnings = FALSE)
 dir.create(dir_tablas,   recursive = TRUE, showWarnings = FALSE)
 

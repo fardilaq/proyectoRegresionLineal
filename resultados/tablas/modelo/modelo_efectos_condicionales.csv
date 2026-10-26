@@ -1,0 +1,10 @@
+"efecto","estimado","error_est","ic95_inf","ic95_sup","p_valor"
+"brillo (+1 punto) con ahorro = 0 y bluetooth = 0",-0.06163,0.005421,-0.07227,-0.05099,3.207e-28
+"brillo (+1 punto) con ahorro = 1 y bluetooth = 0",-0.01563,0.00961,-0.03448,0.003233,0.1043
+"brillo (+1 punto) con ahorro = 0 y bluetooth = 1",-0.06229,0.006557,-0.07515,-0.04942,1.559e-20
+"apps (+1 app) con GPS = 0",-0.172,0.03482,-0.2403,-0.1036,9.251e-07
+"apps (+1 app) con GPS = 1",-0.3898,0.04946,-0.4868,-0.2927,8.643e-15
+"GPS = 1 frente a 0 (apps promedio)",-4.059,0.1663,-4.386,-3.733,3.09e-103
+"ahorro = 1 frente a 0 (brillo promedio)",5.164,0.1821,4.807,5.521,1.181e-129
+"bluetooth = 1 frente a 0 (brillo promedio)",-0.7816,0.1571,-1.09,-0.4733,7.712e-07
+"5G frente a 4G",-1.461,0.2238,-1.9,-1.022,1.059e-10
