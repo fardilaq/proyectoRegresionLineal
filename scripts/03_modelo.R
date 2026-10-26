@@ -168,3 +168,190 @@ cat("\n== Modelo propuesto frente a modelo completo ==\n")
 print(comparacion, row.names = FALSE)
 write.csv(comparacion, file.path(dir_tablas, "modelo_comparacion_completo.csv"),
           row.names = FALSE, fileEncoding = "UTF-8")
+
+# 7. Matriz de datos del modelo
+matriz_x <- model.matrix(modelo)
+nombres_matriz <- c("(Intercept)" = "intercepto",
+                    "log(antiguedad_bateria)" = "log_antiguedad",
+                    "I(temp_c^2)" = "temp_c_cuadrado",
+                    "tipo_conectividad4G" = "conectividad_4G",
+                    "tipo_conectividad5G" = "conectividad_5G",
+                    "apps_c:uso_gps" = "apps_c_x_gps",
+                    "brillo_c:ahorro_energia" = "brillo_c_x_ahorro",
+                    "brillo_c:bluetooth" = "brillo_c_x_bluetooth")
+nombres_cols <- colnames(matriz_x)
+renombrar <- nombres_cols %in% names(nombres_matriz)
+nombres_cols[renombrar] <- unname(nombres_matriz[nombres_cols[renombrar]])
+colnames(matriz_x) <- nombres_cols
+
+matriz_modelo <- data.frame(duracion_bateria = datos$duracion_bateria, matriz_x,
+                            row.names = NULL, check.names = FALSE)
+cat("\n== Matriz de datos del modelo ==\n")
+cat("Filas:", nrow(matriz_modelo), " Columnas:", ncol(matriz_modelo), "\n")
+print(head(matriz_modelo, 5), row.names = FALSE)
+write.csv(matriz_modelo, file.path(dir_tablas, "modelo_matriz_datos.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
+
+# 8. Interpretación de los coeficientes
+b <- coef(modelo)
+sube <- function(x) ifelse(x >= 0, "aumenta", "reduce")
+
+texto <- c(
+  "(Intercept)" = sprintf("Duración esperada (%.2f h) de un dispositivo de referencia: Wi-fi, sin GPS, ahorro, bluetooth ni modo oscuro, con apps, brillo y temperatura en su promedio, antigüedad de 1 mes y capacidad, resolución, tiempo de pantalla y notificaciones iguales a 0. Es una extrapolación sin sentido práctico; solo ancla la ecuación.",
+                          b[["(Intercept)"]]),
+  "capacidad_bateria" = sprintf("Con lo demás constante, cada 100 mAh adicionales de capacidad %s la duración esperada en %.2f h (%.4f h por mAh).",
+                                sube(b[["capacidad_bateria"]]), abs(b[["capacidad_bateria"]]) * 100, abs(b[["capacidad_bateria"]])),
+  "log(antiguedad_bateria)" = sprintf("Con lo demás constante, duplicar la antigüedad de la batería (por ejemplo, de 6 a 12 meses o de 18 a 36) %s la duración esperada en %.2f h; el efecto por mes es mayor al inicio y se estabiliza después.",
+                                      sube(b[["log(antiguedad_bateria)"]]), abs(b[["log(antiguedad_bateria)"]]) * log(2)),
+  "resolucion_pantalla" = sprintf("Con la capacidad y lo demás constante, cada 100 PPI adicionales %s la duración esperada en %.2f h (%.4f h por PPI). Su estimación está afectada por la colinealidad con la capacidad (numeral 4).",
+                                  sube(b[["resolucion_pantalla"]]), abs(b[["resolucion_pantalla"]]) * 100, abs(b[["resolucion_pantalla"]])),
+  "apps_c" = sprintf("Sin GPS, cada aplicación adicional en segundo plano %s la duración esperada en %.3f h.",
+                     sube(b[["apps_c"]]), abs(b[["apps_c"]])),
+  "uso_gps" = sprintf("Activar el GPS %s la duración esperada en %.2f h, con el número de apps en su promedio (%.1f).",
+                      sube(b[["uso_gps"]]), abs(b[["uso_gps"]]), medias_centrado[["apps_segundo_plano"]]),
+  "brillo_c" = sprintf("Sin ahorro de energía ni bluetooth, cada punto porcentual de brillo %s la duración esperada en %.4f h (%.2f h por cada 10 puntos).",
+                       sube(b[["brillo_c"]]), abs(b[["brillo_c"]]), abs(b[["brillo_c"]]) * 10),
+  "ahorro_energia" = sprintf("Activar el ahorro de energía %s la duración esperada en %.2f h, con el brillo en su promedio (%.1f %%).",
+                             sube(b[["ahorro_energia"]]), abs(b[["ahorro_energia"]]), medias_centrado[["brillo_pantalla"]]),
+  "bluetooth" = sprintf("Activar el bluetooth %s la duración esperada en %.2f h, con el brillo en su promedio.",
+                        sube(b[["bluetooth"]]), abs(b[["bluetooth"]])),
+  "modo_oscuro" = sprintf("Activar el modo oscuro %s la duración esperada en %.2f h.",
+                          sube(b[["modo_oscuro"]]), abs(b[["modo_oscuro"]])),
+  "tiempo_pantalla_encendida" = sprintf("Cada hora adicional con la pantalla encendida %s la duración esperada en %.3f h. Su estimación está afectada por la colinealidad con las notificaciones (numeral 4).",
+                                        sube(b[["tiempo_pantalla_encendida"]]), abs(b[["tiempo_pantalla_encendida"]])),
+  "notificaciones" = sprintf("Cada notificación adicional por hora %s la duración esperada en %.3f h (%.2f h por cada 10). Su estimación está afectada por la colinealidad con el tiempo de pantalla (numeral 4).",
+                             sube(b[["notificaciones"]]), abs(b[["notificaciones"]]), abs(b[["notificaciones"]]) * 10),
+  "temp_c" = sprintf("Con la temperatura promedio (%.1f °C), cada grado adicional %s la duración esperada en %.3f h. Como la temperatura tiene término cuadrático, este efecto cambia con la temperatura y se lee junto con el coeficiente cuadrático.",
+                     medias_centrado[["temperatura_C"]], sube(b[["temp_c"]]), abs(b[["temp_c"]])),
+  "I(temp_c^2)" = sprintf("Término de curvatura: parábola %s. La duración máxima se estima a %.2f °C y, a 10 °C de distancia de ese punto, la duración esperada queda %.2f h por debajo del máximo (%.4f h por °C²).",
+                          ifelse(b[["I(temp_c^2)"]] < 0, "cóncava (hay un máximo)", "convexa (hay un mínimo)"),
+                          temp_optima, abs(b[["I(temp_c^2)"]]) * 100, abs(b[["I(temp_c^2)"]])),
+  "tipo_conectividad4G" = sprintf("Frente a Wi-fi, usar 4G %s la duración esperada en %.2f h.",
+                                  sube(b[["tipo_conectividad4G"]]), abs(b[["tipo_conectividad4G"]])),
+  "tipo_conectividad5G" = sprintf("Frente a Wi-fi, usar 5G %s la duración esperada en %.2f h (%.2f h %s que 4G).",
+                                  sube(b[["tipo_conectividad5G"]]), abs(b[["tipo_conectividad5G"]]),
+                                  abs(b[["tipo_conectividad5G"]] - b[["tipo_conectividad4G"]]),
+                                  ifelse(b[["tipo_conectividad5G"]] - b[["tipo_conectividad4G"]] < 0, "menos", "más")),
+  "apps_c:uso_gps" = sprintf("Interacción: con GPS activo, el efecto de cada aplicación adicional en segundo plano pasa de %+.3f h (sin GPS) a %+.3f h (con GPS); el coeficiente es esa diferencia.",
+                             b[["apps_c"]], b[["apps_c"]] + b[["apps_c:uso_gps"]]),
+  "brillo_c:ahorro_energia" = sprintf("Interacción: con ahorro de energía activo, el efecto de cada punto de brillo pasa de %+.4f h a %+.4f h; el coeficiente es esa diferencia.",
+                                      b[["brillo_c"]], b[["brillo_c"]] + b[["brillo_c:ahorro_energia"]]),
+  "brillo_c:bluetooth" = sprintf("Interacción: con bluetooth activo, el efecto de cada punto de brillo pasa de %+.4f h a %+.4f h; el coeficiente es esa diferencia.",
+                                 b[["brillo_c"]], b[["brillo_c"]] + b[["brillo_c:bluetooth"]]))
+
+unidades <- c("(Intercept)" = "h", "capacidad_bateria" = "h por mAh",
+              "log(antiguedad_bateria)" = "h por unidad de ln(meses)",
+              "resolucion_pantalla" = "h por PPI", "apps_c" = "h por app",
+              "uso_gps" = "h", "brillo_c" = "h por punto de brillo", "ahorro_energia" = "h",
+              "bluetooth" = "h", "modo_oscuro" = "h",
+              "tiempo_pantalla_encendida" = "h por hora de pantalla",
+              "notificaciones" = "h por notificación por hora",
+              "temp_c" = "h por °C", "I(temp_c^2)" = "h por °C²",
+              "tipo_conectividad4G" = "h", "tipo_conectividad5G" = "h",
+              "apps_c:uso_gps" = "h por app (diferencia con GPS)",
+              "brillo_c:ahorro_energia" = "h por punto de brillo (diferencia con ahorro)",
+              "brillo_c:bluetooth" = "h por punto de brillo (diferencia con bluetooth)")
+
+stopifnot(all(names(b) %in% names(texto)), all(names(b) %in% names(unidades)))
+
+interpretacion <- data.frame(
+  termino = names(b),
+  estimado = signif(unname(b), 4),
+  unidad = unname(unidades[names(b)]),
+  p_valor = signif(unname(resumen$coefficients[, 4]), 3),
+  significativo = ifelse(resumen$coefficients[, 4] < 0.05, "Sí", "No"),
+  interpretacion = unname(texto[names(b)]),
+  row.names = NULL)
+cat("\n== Interpretación de los coeficientes ==\n")
+print(interpretacion[, 1:5], row.names = FALSE)
+write.csv(interpretacion, file.path(dir_tablas, "modelo_interpretacion_coeficientes.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
+
+# 9. Variables incluidas y excluidas
+prueba_f <- function(reducido, completo) {
+  a <- anova(reducido, completo)
+  c(gl = a$Df[2], F = a$F[2], p_valor = a$`Pr(>F)`[2])
+}
+quitar <- function(terminos) {
+  prueba_f(update(modelo, as.formula(paste(". ~ . -", paste(terminos, collapse = " - ")))), modelo)
+}
+agregar <- function(variable) {
+  prueba_f(modelo, update(modelo, as.formula(paste(". ~ . +", variable))))
+}
+
+incluidas <- data.frame(
+  variable = c("capacidad_bateria", "antiguedad_bateria", "resolucion_pantalla",
+               "apps_segundo_plano", "uso_gps", "brillo_pantalla", "ahorro_energia",
+               "bluetooth", "modo_oscuro", "tiempo_pantalla_encendida", "notificaciones",
+               "temperatura_C", "tipo_conectividad"),
+  forma_en_modelo = c("Lineal", "Logarítmica", "Lineal", "Lineal, centrada",
+                      "0/1", "Lineal, centrada", "0/1", "0/1", "0/1", "Lineal", "Lineal",
+                      "Cuadrática, centrada", "2 indicadoras (4G, 5G; referencia Wi-fi)"),
+  terminos = c("capacidad_bateria", "log(antiguedad_bateria)", "resolucion_pantalla",
+               "apps_c; apps_c:uso_gps", "uso_gps; apps_c:uso_gps",
+               "brillo_c; brillo_c:ahorro_energia; brillo_c:bluetooth",
+               "ahorro_energia; brillo_c:ahorro_energia",
+               "bluetooth; brillo_c:bluetooth", "modo_oscuro",
+               "tiempo_pantalla_encendida", "notificaciones",
+               "temp_c; I(temp_c^2)", "tipo_conectividad"),
+  argumento = c(
+    "Determinante físico de la duración: más capacidad, más horas disponibles.",
+    "Variable de hardware. El enunciado indica degradación acelerada al inicio y estable después; la forma logarítmica lo recoge y ajusta mejor que la lineal en el bivariado.",
+    "Variable de hardware que Google identifica como relevante. Se conserva sin eliminarla aunque tiene colinealidad con la capacidad; el tratamiento va en el numeral 4.",
+    "Factor de uso. Participa en la interacción con GPS que menciona Google.",
+    "Factor de uso. Participa en la interacción con las apps en segundo plano que menciona Google.",
+    "Factor de uso. Participa en la interacción con el ahorro de energía que menciona Google y en la regla del numeral 6 con bluetooth.",
+    "Configuración del sistema operativo con el mayor efecto estimado; modera el efecto del brillo.",
+    "Se conserva para contrastar la regla de Google del numeral 6 (efecto del brillo distinto con bluetooth); además tiene efecto principal significativo.",
+    "Configuración de pantalla con efecto principal significativo.",
+    "Factor de uso con una de las mayores asociaciones con la duración; colineal con las notificaciones (numeral 4).",
+    "Factor de uso con efecto significativo; colineal con el tiempo de pantalla (numeral 4).",
+    "El enunciado indica un rango intermedio óptimo de temperatura; se modela con término cuadrático.",
+    "Efecto significativo y la forma con indicadoras no impone pasos iguales entre Wi-fi, 4G y 5G."),
+  tipo_prueba = "Quitar sus términos",
+  stringsAsFactors = FALSE)
+
+terminos_quitar <- list(
+  capacidad_bateria = "capacidad_bateria",
+  antiguedad_bateria = "log(antiguedad_bateria)",
+  resolucion_pantalla = "resolucion_pantalla",
+  apps_segundo_plano = c("apps_c", "apps_c:uso_gps"),
+  uso_gps = c("uso_gps", "apps_c:uso_gps"),
+  brillo_pantalla = c("brillo_c", "brillo_c:ahorro_energia", "brillo_c:bluetooth"),
+  ahorro_energia = c("ahorro_energia", "brillo_c:ahorro_energia"),
+  bluetooth = c("bluetooth", "brillo_c:bluetooth"),
+  modo_oscuro = "modo_oscuro",
+  tiempo_pantalla_encendida = "tiempo_pantalla_encendida",
+  notificaciones = "notificaciones",
+  temperatura_C = c("temp_c", "I(temp_c^2)"),
+  tipo_conectividad = "tipo_conectividad")
+
+pruebas_incluidas <- t(sapply(incluidas$variable, function(v) quitar(terminos_quitar[[v]])))
+
+excluidas <- data.frame(
+  variable = c("contactos_guardados", "volumen_timbre", "color_dispositivo", "dia_semana"),
+  forma_en_modelo = "No entra",
+  terminos = "-",
+  argumento = c(
+    "No hay un mecanismo claro por el cual el número de contactos gaste batería, y en el bivariado no mostró relación con la duración. Agregarla no mejora el modelo.",
+    "El volumen configurado para las llamadas no tiene un mecanismo claro de consumo relevante y no mostró relación en el bivariado. Agregarla no mejora el modelo.",
+    "Es un atributo estético de la carcasa. Sin diferencias en la duración en el bivariado ni en el modelo.",
+    "No hay razón física para que el día de la medición afecte la duración y no hubo diferencias en el bivariado. Con 6 indicadoras costaría 6 parámetros sin aporte."),
+  tipo_prueba = "Agregarla al modelo",
+  stringsAsFactors = FALSE)
+
+pruebas_excluidas <- t(sapply(excluidas$variable, agregar))
+
+tabla_inclusion <- rbind(
+  data.frame(variable = incluidas$variable, decision = "Incluida",
+             incluidas[c("forma_en_modelo", "terminos")], pruebas_incluidas,
+             incluidas[c("tipo_prueba", "argumento")], row.names = NULL),
+  data.frame(variable = excluidas$variable, decision = "Excluida",
+             excluidas[c("forma_en_modelo", "terminos")], pruebas_excluidas,
+             excluidas[c("tipo_prueba", "argumento")], row.names = NULL))
+tabla_inclusion[c("F", "p_valor")] <- signif(tabla_inclusion[c("F", "p_valor")], 4)
+
+cat("\n== Inclusión y exclusión de variables ==\n")
+print(tabla_inclusion[, c("variable", "decision", "gl", "F", "p_valor", "tipo_prueba")], row.names = FALSE)
+write.csv(tabla_inclusion, file.path(dir_tablas, "modelo_inclusion_exclusion.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
