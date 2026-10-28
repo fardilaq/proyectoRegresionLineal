@@ -1,0 +1,5 @@
+"variable","carga_PC1","varianza_explicada_PC1","componente"
+"capacidad_bateria",0.7071,0.9804,"pc_hardware"
+"resolucion_pantalla",0.7071,0.9804,"pc_hardware"
+"tiempo_pantalla_encendida",0.7071,0.9784,"pc_uso"
+"notificaciones",0.7071,0.9784,"pc_uso"
