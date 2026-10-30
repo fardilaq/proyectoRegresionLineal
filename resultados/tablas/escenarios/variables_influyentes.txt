@@ -1,0 +1,92 @@
+VARIABLES QUE MÁS INFLUYEN EN LAS DIFERENCIAS ENTRE FABRICANTES (modelo C)
+
+Referencia: dispositivo promedio de los 1000 datos, duración 47.3 h.
+Aporte de un grupo de variables = suma de coeficiente x (valor del fabricante - promedio de los datos), en horas.
+Positivo = suma horas de batería frente al promedio; negativo = resta horas.
+Apps, GPS y su interacción van juntas, igual que brillo, ahorro de energía y su interacción; temperatura incluye el término cuadrático.
+Lectura asociativa según el modelo, no una demostración de causa.
+
+TitanCell: duración predicha 38.0 h (-9.3 h frente al promedio). Intervalo individual 95 %: [30.6, 45.5] h.
+  Variables que más pesan:
+    1. Apps y GPS: -5.8 h  [apps_segundo_plano=16 (promedio datos 8.01); uso_gps=1 (promedio datos 0.32)]
+    2. Uso de pantalla: -5.2 h  [tiempo_pantalla_encendida=9.5 (promedio datos 4.95); notificaciones=55 (promedio datos 29.63)]
+    3. Hardware: +3.9 h  [capacidad_bateria=5800 (promedio datos 3989.03); resolucion_pantalla=540 (promedio datos 398.57)]
+
+EcoPhone: duración predicha 55.2 h (+7.9 h frente al promedio). Intervalo individual 95 %: [51.8, 58.7] h.
+  Variables que más pesan:
+    1. Brillo y ahorro: +4.2 h  [brillo_pantalla=30 (promedio datos 55.07); ahorro_energia=1 (promedio datos 0.25)]
+    2. Hardware: -3.2 h  [capacidad_bateria=2500 (promedio datos 3989.03); resolucion_pantalla=280 (promedio datos 398.57)]
+    3. Uso de pantalla: +3.2 h  [tiempo_pantalla_encendida=2.5 (promedio datos 4.95); notificaciones=12 (promedio datos 29.63)]
+
+BudgetMax: duración predicha 48.2 h (+0.8 h frente al promedio). Intervalo individual 95 %: [44.2, 52.2] h.
+  Variables que más pesan:
+    1. Apps y GPS: +1.6 h  [apps_segundo_plano=6 (promedio datos 8.01); uso_gps=0 (promedio datos 0.32)]
+    2. Hardware: -1.5 h  [capacidad_bateria=3000 (promedio datos 3989.03); resolucion_pantalla=300 (promedio datos 398.57)]
+    3. Uso de pantalla: +1.5 h  [tiempo_pantalla_encendida=4 (promedio datos 4.95); notificaciones=20 (promedio datos 29.63)]
+
+ProBusiness: duración predicha 51.8 h (+4.5 h frente al promedio). Intervalo individual 95 %: [46.7, 56.9] h.
+  Variables que más pesan:
+    1. Hardware: +1.6 h  [capacidad_bateria=4500 (promedio datos 3989.03); resolucion_pantalla=420 (promedio datos 398.57)]
+    2. Conectividad: +1.3 h  [tipo_conectividad=Wi-fi (38% de los datos)]
+    3. Temperatura: +1.2 h  [temperatura_C=21 (promedio datos 23.23)]
+
+CamSnap: duración predicha 43.3 h (-4.0 h frente al promedio). Intervalo individual 95 %: [38.7, 47.9] h.
+  Variables que más pesan:
+    1. Apps y GPS: -3.1 h  [apps_segundo_plano=9 (promedio datos 8.01); uso_gps=1 (promedio datos 0.32)]
+    2. Antigüedad: +2.6 h  [antiguedad_bateria=3 (promedio datos 17.62)]
+    3. Brillo y ahorro: -2.6 h  [brillo_pantalla=75 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)]
+
+RuggedX: duración predicha 57.6 h (+10.3 h frente al promedio). Intervalo individual 95 %: [53.5, 61.7] h.
+  Variables que más pesan:
+    1. Hardware: +9.6 h  [capacidad_bateria=5800 (promedio datos 3989.03); resolucion_pantalla=340 (promedio datos 398.57)]
+    2. Brillo y ahorro: +3.5 h  [brillo_pantalla=80 (promedio datos 55.07); ahorro_energia=1 (promedio datos 0.25)]
+    3. Uso de pantalla: +2.6 h  [tiempo_pantalla_encendida=3 (promedio datos 4.95); notificaciones=15 (promedio datos 29.63)]
+  ADVERTENCIA: fuera del rango observado en los datos: pc_hardware2=2.59 (rango observado -0.58 a 0.64). La predicción es una extrapolación; mientras más lejos del rango, menos confiable, y los aportes asociados deben leerse con cautela.
+
+SocialTrend: duración predicha 38.3 h (-9.0 h frente al promedio). Intervalo individual 95 %: [30.3, 46.3] h.
+  Variables que más pesan:
+    1. Uso de pantalla: -6.0 h  [tiempo_pantalla_encendida=10 (promedio datos 4.95); notificaciones=60 (promedio datos 29.63)]
+    2. Brillo y ahorro: -3.2 h  [brillo_pantalla=85 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)]
+    3. Conectividad: -1.8 h  [tipo_conectividad=5G (16% de los datos)]
+
+SeniorEasy: duración predicha 58.2 h (+10.8 h frente al promedio). Intervalo individual 95 %: [55.0, 61.4] h.
+  Variables que más pesan:
+    1. Uso de pantalla: +4.2 h  [tiempo_pantalla_encendida=1.5 (promedio datos 4.95); notificaciones=8 (promedio datos 29.63)]
+    2. Brillo y ahorro: +4.1 h  [brillo_pantalla=40 (promedio datos 55.07); ahorro_energia=1 (promedio datos 0.25)]
+    3. Apps y GPS: +2.4 h  [apps_segundo_plano=2 (promedio datos 8.01); uso_gps=0 (promedio datos 0.32)]
+
+MidRange: duración predicha 48.0 h (+0.6 h frente al promedio). Intervalo individual 95 %: [43.4, 52.6] h.
+  Variables que más pesan:
+    1. Brillo y ahorro: -1.3 h  [brillo_pantalla=55 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)]
+    2. Apps y GPS: +1.3 h  [apps_segundo_plano=8 (promedio datos 8.01); uso_gps=0 (promedio datos 0.32)]
+    3. Temperatura: +1.2 h  [temperatura_C=23 (promedio datos 23.23)]
+
+ColdZone: duración predicha 46.2 h (-1.1 h frente al promedio). Intervalo individual 95 %: [41.4, 51.1] h.
+  Variables que más pesan:
+    1. Hardware: +4.2 h  [capacidad_bateria=5200 (promedio datos 3989.03); resolucion_pantalla=440 (promedio datos 398.57)]
+    2. Apps y GPS: -3.1 h  [apps_segundo_plano=9 (promedio datos 8.01); uso_gps=1 (promedio datos 0.32)]
+    3. Temperatura: -2.7 h  [temperatura_C=9 (promedio datos 23.23)]
+  ADVERTENCIA: fuera del rango observado en los datos: pc_hardware2=0.71 (rango observado -0.58 a 0.64). La predicción es una extrapolación; mientras más lejos del rango, menos confiable, y los aportes asociados deben leerse con cautela.
+
+RESUMEN: grupos de variables ordenados por aporte absoluto promedio entre los fabricantes (h)
+  1. Hardware: 2.7 h
+  2. Brillo y ahorro: 2.5 h
+  3. Uso de pantalla: 2.4 h
+  4. Apps y GPS: 2.2 h
+  5. Temperatura: 1.3 h
+  6. Conectividad: 1.2 h
+  7. Antigüedad: 1.1 h
+  8. Otros: 0.4 h
+
+Mismo resumen sin los fabricantes marcados como extrapolación (RuggedX, ColdZone):
+  1. Uso de pantalla: 2.7 h
+  2. Brillo y ahorro: 2.6 h
+  3. Apps y GPS: 2.2 h
+  4. Hardware: 1.6 h
+  5. Conectividad: 1.2 h
+  6. Antigüedad: 1.1 h
+  7. Temperatura: 1.0 h
+  8. Otros: 0.4 h
+
+ANCHO DEL INTERVALO INDIVIDUAL: depende de pc_uso (varianza relativa = exp(0.390 + 0.336 x pc_uso)); correlación entre pc_uso y el ancho: 0.98.
+Ancho entre 6.4 h (SeniorEasy) y 15.9 h (SocialTrend).

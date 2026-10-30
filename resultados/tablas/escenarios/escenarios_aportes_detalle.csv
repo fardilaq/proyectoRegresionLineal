@@ -1,0 +1,81 @@
+"fabricante","grupo","valores_vs_promedio","aporte_h"
+"TitanCell","Hardware","capacidad_bateria=5800 (promedio datos 3989.03); resolucion_pantalla=540 (promedio datos 398.57)",3.944
+"TitanCell","Antigüedad","antiguedad_bateria=4 (promedio datos 17.62)",2.097
+"TitanCell","Apps y GPS","apps_segundo_plano=16 (promedio datos 8.01); uso_gps=1 (promedio datos 0.32)",-5.76
+"TitanCell","Brillo y ahorro","brillo_pantalla=90 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)",-3.555
+"TitanCell","Uso de pantalla","tiempo_pantalla_encendida=9.5 (promedio datos 4.95); notificaciones=55 (promedio datos 29.63)",-5.236
+"TitanCell","Temperatura","temperatura_C=27 (promedio datos 23.23)",0.589
+"TitanCell","Conectividad","tipo_conectividad=5G (16% de los datos)",-1.785
+"TitanCell","Otros","bluetooth=1 (promedio datos 0.42); modo_oscuro=1 (promedio datos 0.39)",0.384
+"EcoPhone","Hardware","capacidad_bateria=2500 (promedio datos 3989.03); resolucion_pantalla=280 (promedio datos 398.57)",-3.178
+"EcoPhone","Antigüedad","antiguedad_bateria=20 (promedio datos 17.62)",-0.765
+"EcoPhone","Apps y GPS","apps_segundo_plano=3 (promedio datos 8.01); uso_gps=0 (promedio datos 0.32)",2.174
+"EcoPhone","Brillo y ahorro","brillo_pantalla=30 (promedio datos 55.07); ahorro_energia=1 (promedio datos 0.25)",4.229
+"EcoPhone","Uso de pantalla","tiempo_pantalla_encendida=2.5 (promedio datos 4.95); notificaciones=12 (promedio datos 29.63)",3.163
+"EcoPhone","Temperatura","temperatura_C=22 (promedio datos 23.23)",1.23
+"EcoPhone","Conectividad","tipo_conectividad=Wi-fi (38% de los datos)",1.264
+"EcoPhone","Otros","bluetooth=0 (promedio datos 0.42); modo_oscuro=0 (promedio datos 0.39)",-0.212
+"BudgetMax","Hardware","capacidad_bateria=3000 (promedio datos 3989.03); resolucion_pantalla=300 (promedio datos 398.57)",-1.547
+"BudgetMax","Antigüedad","antiguedad_bateria=15 (promedio datos 17.62)",-0.253
+"BudgetMax","Apps y GPS","apps_segundo_plano=6 (promedio datos 8.01); uso_gps=0 (promedio datos 0.32)",1.643
+"BudgetMax","Brillo y ahorro","brillo_pantalla=50 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)",-0.983
+"BudgetMax","Uso de pantalla","tiempo_pantalla_encendida=4 (promedio datos 4.95); notificaciones=20 (promedio datos 29.63)",1.469
+"BudgetMax","Temperatura","temperatura_C=24 (promedio datos 23.23)",1.118
+"BudgetMax","Conectividad","tipo_conectividad=4G (46% de los datos)",-0.409
+"BudgetMax","Otros","bluetooth=0 (promedio datos 0.42); modo_oscuro=0 (promedio datos 0.39)",-0.212
+"ProBusiness","Hardware","capacidad_bateria=4500 (promedio datos 3989.03); resolucion_pantalla=420 (promedio datos 398.57)",1.639
+"ProBusiness","Antigüedad","antiguedad_bateria=8 (promedio datos 17.62)",0.865
+"ProBusiness","Apps y GPS","apps_segundo_plano=10 (promedio datos 8.01); uso_gps=0 (promedio datos 0.32)",0.936
+"ProBusiness","Brillo y ahorro","brillo_pantalla=45 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)",-0.661
+"ProBusiness","Uso de pantalla","tiempo_pantalla_encendida=6 (promedio datos 4.95); notificaciones=35 (promedio datos 29.63)",-1.167
+"ProBusiness","Temperatura","temperatura_C=21 (promedio datos 23.23)",1.214
+"ProBusiness","Conectividad","tipo_conectividad=Wi-fi (38% de los datos)",1.264
+"ProBusiness","Otros","bluetooth=1 (promedio datos 0.42); modo_oscuro=1 (promedio datos 0.39)",0.384
+"CamSnap","Hardware","capacidad_bateria=5000 (promedio datos 3989.03); resolucion_pantalla=520 (promedio datos 398.57)",0.993
+"CamSnap","Antigüedad","antiguedad_bateria=3 (promedio datos 17.62)",2.609
+"CamSnap","Apps y GPS","apps_segundo_plano=9 (promedio datos 8.01); uso_gps=1 (promedio datos 0.32)",-3.121
+"CamSnap","Brillo y ahorro","brillo_pantalla=75 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)",-2.59
+"CamSnap","Uso de pantalla","tiempo_pantalla_encendida=5.5 (promedio datos 4.95); notificaciones=25 (promedio datos 29.63)",0.037
+"CamSnap","Temperatura","temperatura_C=26 (promedio datos 23.23)",0.813
+"CamSnap","Conectividad","tipo_conectividad=5G (16% de los datos)",-1.785
+"CamSnap","Otros","bluetooth=1 (promedio datos 0.42); modo_oscuro=0 (promedio datos 0.39)",-0.979
+"RuggedX","Hardware","capacidad_bateria=5800 (promedio datos 3989.03); resolucion_pantalla=340 (promedio datos 398.57)",9.637
+"RuggedX","Antigüedad","antiguedad_bateria=30 (promedio datos 17.62)",-1.486
+"RuggedX","Apps y GPS","apps_segundo_plano=5 (promedio datos 8.01); uso_gps=1 (promedio datos 0.32)",-1.613
+"RuggedX","Brillo y ahorro","brillo_pantalla=80 (promedio datos 55.07); ahorro_energia=1 (promedio datos 0.25)",3.532
+"RuggedX","Uso de pantalla","tiempo_pantalla_encendida=3 (promedio datos 4.95); notificaciones=15 (promedio datos 29.63)",2.57
+"RuggedX","Temperatura","temperatura_C=33 (promedio datos 23.23)",-1.761
+"RuggedX","Conectividad","tipo_conectividad=4G (46% de los datos)",-0.409
+"RuggedX","Otros","bluetooth=0 (promedio datos 0.42); modo_oscuro=0 (promedio datos 0.39)",-0.212
+"SocialTrend","Hardware","capacidad_bateria=4200 (promedio datos 3989.03); resolucion_pantalla=460 (promedio datos 398.57)",-0.82
+"SocialTrend","Antigüedad","antiguedad_bateria=6 (promedio datos 17.62)",1.376
+"SocialTrend","Apps y GPS","apps_segundo_plano=15 (promedio datos 8.01); uso_gps=0 (promedio datos 0.32)",0.051
+"SocialTrend","Brillo y ahorro","brillo_pantalla=85 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)",-3.233
+"SocialTrend","Uso de pantalla","tiempo_pantalla_encendida=10 (promedio datos 4.95); notificaciones=60 (promedio datos 29.63)",-6.004
+"SocialTrend","Temperatura","temperatura_C=25 (promedio datos 23.23)",0.99
+"SocialTrend","Conectividad","tipo_conectividad=5G (16% de los datos)",-1.785
+"SocialTrend","Otros","bluetooth=1 (promedio datos 0.42); modo_oscuro=1 (promedio datos 0.39)",0.384
+"SeniorEasy","Hardware","capacidad_bateria=3200 (promedio datos 3989.03); resolucion_pantalla=310 (promedio datos 398.57)",-0.951
+"SeniorEasy","Antigüedad","antiguedad_bateria=24 (promedio datos 17.62)",-1.089
+"SeniorEasy","Apps y GPS","apps_segundo_plano=2 (promedio datos 8.01); uso_gps=0 (promedio datos 0.32)",2.351
+"SeniorEasy","Brillo y ahorro","brillo_pantalla=40 (promedio datos 55.07); ahorro_energia=1 (promedio datos 0.25)",4.089
+"SeniorEasy","Uso de pantalla","tiempo_pantalla_encendida=1.5 (promedio datos 4.95); notificaciones=8 (promedio datos 29.63)",4.177
+"SeniorEasy","Temperatura","temperatura_C=23 (promedio datos 23.23)",1.198
+"SeniorEasy","Conectividad","tipo_conectividad=Wi-fi (38% de los datos)",1.264
+"SeniorEasy","Otros","bluetooth=0 (promedio datos 0.42); modo_oscuro=0 (promedio datos 0.39)",-0.212
+"MidRange","Hardware","capacidad_bateria=4000 (promedio datos 3989.03); resolucion_pantalla=400 (promedio datos 398.57)",0.008
+"MidRange","Antigüedad","antiguedad_bateria=12 (promedio datos 17.62)",0.144
+"MidRange","Apps y GPS","apps_segundo_plano=8 (promedio datos 8.01); uso_gps=0 (promedio datos 0.32)",1.29
+"MidRange","Brillo y ahorro","brillo_pantalla=55 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)",-1.304
+"MidRange","Uso de pantalla","tiempo_pantalla_encendida=5 (promedio datos 4.95); notificaciones=30 (promedio datos 29.63)",-0.067
+"MidRange","Temperatura","temperatura_C=23 (promedio datos 23.23)",1.198
+"MidRange","Conectividad","tipo_conectividad=4G (46% de los datos)",-0.409
+"MidRange","Otros","bluetooth=0 (promedio datos 0.42); modo_oscuro=0 (promedio datos 0.39)",-0.212
+"ColdZone","Hardware","capacidad_bateria=5200 (promedio datos 3989.03); resolucion_pantalla=440 (promedio datos 398.57)",4.15
+"ColdZone","Antigüedad","antiguedad_bateria=10 (promedio datos 17.62)",0.468
+"ColdZone","Apps y GPS","apps_segundo_plano=9 (promedio datos 8.01); uso_gps=1 (promedio datos 0.32)",-3.121
+"ColdZone","Brillo y ahorro","brillo_pantalla=50 (promedio datos 55.07); ahorro_energia=0 (promedio datos 0.25)",-0.983
+"ColdZone","Uso de pantalla","tiempo_pantalla_encendida=6 (promedio datos 4.95); notificaciones=28 (promedio datos 29.63)",-0.557
+"ColdZone","Temperatura","temperatura_C=9 (promedio datos 23.23)",-2.715
+"ColdZone","Conectividad","tipo_conectividad=Wi-fi (38% de los datos)",1.264
+"ColdZone","Otros","bluetooth=1 (promedio datos 0.42); modo_oscuro=1 (promedio datos 0.39)",0.384
