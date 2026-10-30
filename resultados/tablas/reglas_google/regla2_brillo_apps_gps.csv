@@ -1,0 +1,13 @@
+"modelo","contraste","estimado","error_est","t","gl","p_dos_colas","p_cola_izq","ic95_inf","ic95_sup"
+"C ampliado","L base: b_brillo - b_apps - b_gps",4.148,0.153,27.1,982,3.13e-121,1,3.847,4.448
+"C ampliado","L con ahorro activo en el brillo",4.198,0.1531,27.43,982,2.063e-123,1,3.898,4.499
+"C ampliado","L con GPS activo en el efecto de apps",4.349,0.1557,27.92,982,9.129e-127,1,4.043,4.654
+"C ampliado","+10 puntos de brillo vs +1 app y GPS",3.576,0.1586,22.55,982,4.401e-91,1,3.265,3.887
+"C ampliado","+20 puntos de brillo vs +1 app y GPS",2.941,0.1777,16.55,982,1.856e-54,1,2.592,3.29
+"C ampliado","+50 puntos de brillo vs +1 app y GPS",1.036,0.2818,3.678,982,0.000248,0.9999,0.4834,1.589
+"C","L base: b_brillo - b_apps - b_gps",4.149,0.1528,27.14,983,1.563e-121,1,3.849,4.448
+"C","L con ahorro activo en el brillo",4.199,0.1529,27.46,983,1.076e-123,1,3.899,4.499
+"C","L con GPS activo en el efecto de apps",4.349,0.1556,27.95,983,5.559e-127,1,4.043,4.654
+"C","+10 puntos de brillo vs +1 app y GPS",3.57,0.1568,22.76,983,1.924e-92,1,3.262,3.878
+"C","+20 puntos de brillo vs +1 app y GPS",2.927,0.1701,17.2,983,3.625e-58,1,2.593,3.261
+"C","+50 puntos de brillo vs +1 app y GPS",0.9973,0.2465,4.046,983,5.622e-05,1,0.5136,1.481

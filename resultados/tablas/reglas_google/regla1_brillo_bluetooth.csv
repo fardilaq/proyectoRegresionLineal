@@ -1,0 +1,6 @@
+"contraste","estimado","error_est","t","gl","p_dos_colas","p_cola_izq","ic95_inf","ic95_sup"
+"Interacción brillo x bluetooth (diferencia de efectos)",-0.002071,0.007309,-0.2834,982,0.7769,0.3885,-0.01641,0.01227
+"Efecto de +1 punto de brillo, bluetooth apagado, ahorro apagado",-0.06349,0.004875,-13.02,982,6.975e-36,3.487e-36,-0.07306,-0.05393
+"Efecto de +1 punto de brillo, bluetooth activo, ahorro apagado",-0.06557,0.005965,-10.99,982,1.381e-26,6.906e-27,-0.07727,-0.05386
+"Efecto de +1 punto de brillo, bluetooth apagado, ahorro activo",-0.01297,0.008907,-1.456,982,0.1457,0.07287,-0.03045,0.004511
+"Efecto de +1 punto de brillo, bluetooth activo, ahorro activo",-0.01504,0.009055,-1.661,982,0.09709,0.04855,-0.03281,0.002732
