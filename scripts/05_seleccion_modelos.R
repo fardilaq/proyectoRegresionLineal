@@ -3,7 +3,7 @@
 # frente al modelo A. El modelo B (solo PC1 de hardware) se conserva como candidato intermedio.
 # Autocontenido: no depende de los scripts 03 ni 04.
 # Uso: desde la raíz del repo, source("scripts/05_seleccion_modelos.R")
-# Salidas: resultados/tablas/seleccion/*.csv y modelo_C_punto5.rds
+# Salidas: resultados/tablas/seleccion/*.csv, modelo_C_punto5.rds (numeral 7) y modelo_Cx_punto6.rds (numeral 6)
 
 library(readxl)
 library(lmtest)
@@ -63,22 +63,29 @@ formula_C <- duracion_bateria ~ pc_hardware + pc_hardware2 + log(antiguedad_bate
   apps_c * uso_gps + brillo_c * ahorro_energia + bluetooth + modo_oscuro +
   pc_uso + temp_c + I(temp_c^2) + tipo_conectividad
 
-formulas <- list(A = formula_A, B = formula_B, C = formula_C)
+formula_Cx <- update(formula_C, . ~ . + brillo_c:bluetooth)
+
+formulas <- list(A = formula_A, B = formula_B, C = formula_C, Cx = formula_Cx)
 
 modeloA     <- lm(formula_A, data = datos)
 modelo_Bols <- lm(formula_B, data = datos)
 modelo_Cols <- lm(formula_C, data = datos)
+modelo_Cxols <- lm(formula_Cx, data = datos)
 
 # Modelo de varianza: ln(e^2) = a0 + a1*pc_uso  ->  peso = 1/exp(valor ajustado)
 aux_B <- lm(log(residuals(modelo_Bols)^2) ~ pc_uso, data = datos)
 aux_C <- lm(log(residuals(modelo_Cols)^2) ~ pc_uso, data = datos)
+aux_Cx <- lm(log(residuals(modelo_Cxols)^2) ~ pc_uso, data = datos)
 datos$pesos_B <- 1 / exp(fitted(aux_B))
 datos$pesos_C <- 1 / exp(fitted(aux_C))
 modeloB <- lm(formula_B, data = datos, weights = pesos_B)
 modeloC <- lm(formula_C, data = datos, weights = pesos_C)
+datos$pesos_Cx <- 1 / exp(fitted(aux_Cx))
+modeloCx <- lm(formula_Cx, data = datos, weights = pesos_Cx)
 
 cat("\n== Modelo de varianza (C) ==\n"); print(summary(aux_C))
 cat("\n== Modelo C (parsimonioso + PCA + WLS) ==\n"); print(summary(modeloC))
+cat("\n== Modelo C ampliado (C + brillo_c:bluetooth, para el numeral 6) ==\n"); print(summary(modeloCx))
 
 # Justificación de quitar brillo:bluetooth (F parcial dentro de A)
 cat("\n== F parcial: quitar brillo_c:bluetooth de A ==\n")
@@ -113,7 +120,9 @@ diag_tabla <- rbind(diagnostico(modeloA, "A (numeral 3)"),
                     diagnostico(modelo_Bols, "B sin pesos (OLS)"),
                     diagnostico(modeloB, "B con pesos (WLS)", con_reset = FALSE),
                     diagnostico(modelo_Cols, "C sin pesos (OLS)"),
-                    diagnostico(modeloC, "C final (WLS)", con_reset = FALSE))
+                    diagnostico(modeloC, "C final (WLS)", con_reset = FALSE),
+                    diagnostico(modelo_Cxols, "C ampliado sin pesos (OLS)"),
+                    diagnostico(modeloCx, "C ampliado (WLS)", con_reset = FALSE))
 diag_tabla[-1] <- signif(diag_tabla[-1], 4)
 cat("\n== Supuestos (WLS: residuos ponderados; RESET se evalúa en el modelo OLS) ==\n")
 print(diag_tabla, row.names = FALSE)
@@ -152,7 +161,7 @@ resumen_cv <- function(r) {
              ancho_uso_alto = mean((r$upr - r$lwr)[alto]),
              ancho_uso_bajo = mean((r$upr - r$lwr)[r$pc_uso < quantile(r$pc_uso, 0.2)]))
 }
-cv_A <- resumen_cv(cv_modelo("A")); cv_B <- resumen_cv(cv_modelo("B")); cv_C <- resumen_cv(cv_modelo("C"))
+cv_A <- resumen_cv(cv_modelo("A")); cv_B <- resumen_cv(cv_modelo("B")); cv_C <- resumen_cv(cv_modelo("C")); cv_Cx <- resumen_cv(cv_modelo("Cx"))
 
 # 7. Tabla comparativa (R2 y sigma de B y C son ponderados: no comparables 1 a 1)
 resumen_global <- function(m, nombre) {
@@ -164,8 +173,9 @@ resumen_global <- function(m, nombre) {
 }
 comparacion <- cbind(rbind(resumen_global(modeloA, "A (numeral 3)"),
                            resumen_global(modeloB, "B (PC1 hardware + WLS)"),
-                           resumen_global(modeloC, "C (parsimonioso + PCA + WLS)")),
-                     rbind(cv_A, cv_B, cv_C))
+                           resumen_global(modeloC, "C (parsimonioso + PCA + WLS)"),
+                           resumen_global(modeloCx, "C ampliado (C + brillo x bluetooth)")),
+                     rbind(cv_A, cv_B, cv_C, cv_Cx))
 comparacion[-1] <- signif(comparacion[-1], 4)
 cat("\n== Comparación A vs B vs C ==\n"); print(comparacion, row.names = FALSE)
 write.csv(comparacion, file.path(dir_tablas, "seleccion_comparacion.csv"),
@@ -203,5 +213,21 @@ saveRDS(list(formula = formula_C, coeficientes = coef(modeloC), vcov = vcov(mode
              coef_aux = coef(aux_C), medias_centrado = medias_centrado,
              pc_hardware = obj_pc_hw, pc_uso = obj_pc_uso),
         file.path(dir_tablas, "modelo_C_punto5.rds"))
+
+# 11. Coeficientes y objeto del C ampliado (numeral 6)
+s <- summary(modeloCx); ci <- confint(modeloCx)
+coef_Cx <- data.frame(termino = names(coef(modeloCx)), estimado = coef(modeloCx),
+                      error_est = s$coefficients[, 2], t = s$coefficients[, 3],
+                      p_valor = s$coefficients[, 4], ic95_inf = ci[, 1], ic95_sup = ci[, 2],
+                      row.names = NULL)
+coef_Cx[-1] <- signif(coef_Cx[-1], 4)
+write.csv(coef_Cx, file.path(dir_tablas, "modeloCx_coeficientes.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
+
+saveRDS(list(formula = formula_Cx, coeficientes = coef(modeloCx), vcov = vcov(modeloCx),
+             sigma = summary(modeloCx)$sigma, gl = df.residual(modeloCx),
+             coef_aux = coef(aux_Cx), medias_centrado = medias_centrado,
+             pc_hardware = obj_pc_hw, pc_uso = obj_pc_uso),
+        file.path(dir_tablas, "modelo_Cx_punto6.rds"))
 
 cat("\n== Archivos guardados en", dir_tablas, "==\n")
