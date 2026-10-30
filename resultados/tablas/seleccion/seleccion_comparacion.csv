@@ -1,3 +1,4 @@
 "modelo","parametros","R2_ajustado","F","F_critico","p_F","AIC","BIC","RMSE_CV","cobertura_95","cobertura_95_uso_alto","ancho_medio","ancho_uso_alto","ancho_uso_bajo"
 "A (numeral 3)",19,0.8115,239.9,1.614,0,4639,4737,2.456,0.936,0.835,9.663,9.675,9.668
-"B (parsimonioso + PCA + WLS)",16,0.8083,281.8,1.677,0,4615,4699,2.52,0.955,0.975,9.796,13.54,7.416
+"B (PC1 hardware + WLS)",16,0.8083,281.8,1.677,0,4615,4699,2.52,0.955,0.975,9.796,13.54,7.416
+"C (parsimonioso + PCA + WLS)",17,0.8243,293.9,1.654,0,4537,4625,2.449,0.955,0.97,9.443,13.23,7.073

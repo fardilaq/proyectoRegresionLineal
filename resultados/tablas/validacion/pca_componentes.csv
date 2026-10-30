@@ -1,5 +1,9 @@
-"variable","carga_PC1","varianza_explicada_PC1","componente"
-"capacidad_bateria",0.7071,0.9804,"pc_hardware"
-"resolucion_pantalla",0.7071,0.9804,"pc_hardware"
-"tiempo_pantalla_encendida",0.7071,0.9784,"pc_uso"
-"notificaciones",0.7071,0.9784,"pc_uso"
+"par","componente","variable","carga","varianza_explicada"
+"hardware","PC1","capacidad_bateria",0.7071,0.9804
+"hardware","PC1","resolucion_pantalla",0.7071,0.9804
+"hardware","PC2","capacidad_bateria",0.7071,0.0196
+"hardware","PC2","resolucion_pantalla",-0.7071,0.0196
+"uso","PC1","tiempo_pantalla_encendida",0.7071,0.9784
+"uso","PC1","notificaciones",0.7071,0.9784
+"uso","PC2","tiempo_pantalla_encendida",0.7071,0.0216
+"uso","PC2","notificaciones",-0.7071,0.0216

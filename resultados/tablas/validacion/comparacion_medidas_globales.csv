@@ -1,5 +1,5 @@
 "medida","inicial","con_PCA","final"
-"Número de parámetros",19,17,17
-"R2 ajustado",0.8115,0.8004,0.8247
-"Sigma residual (h)",2.435,2.506,1.869
-"VIF máximo",13.2,1.923,1.903
+"Número de parámetros",19,18,18
+"R2 ajustado",0.8115,0.8113,0.8241
+"Sigma residual (h)",2.435,2.436,1.905
+"VIF máximo",13.2,1.923,1.894

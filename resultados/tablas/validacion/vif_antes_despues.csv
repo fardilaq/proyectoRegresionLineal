@@ -1,35 +1,36 @@
 "modelo","variable","VIF"
-"Inicial","capacidad_bateria",13.2020178916073
+"Inicial","capacidad_bateria",13.2020178916067
 "Inicial","log_antiguedad",1.01373362249469
-"Inicial","resolucion_pantalla",13.1723483279673
-"Inicial","apps_c",1.52749206392662
+"Inicial","resolucion_pantalla",13.1723483279667
+"Inicial","apps_c",1.52749206392661
 "Inicial","uso_gps",1.01098871352213
-"Inicial","brillo_c",1.92359052148047
+"Inicial","brillo_c",1.92359052148048
 "Inicial","ahorro_energia",1.03745769655342
 "Inicial","bluetooth",1.01265675644007
 "Inicial","modo_oscuro",1.01267955008241
-"Inicial","tiempo_pantalla_encendida",12.0137738760411
-"Inicial","notificaciones",12.0282604464025
+"Inicial","tiempo_pantalla_encendida",12.0137738760412
+"Inicial","notificaciones",12.0282604464026
 "Inicial","temp_c",1.02684887091104
 "Inicial","temp_c_cuadrado",1.01056265453662
 "Inicial","conectividad_4G",1.21456446878939
-"Inicial","conectividad_5G",1.20963274217002
-"Inicial","apps_c_x_gps",1.51194396536018
-"Inicial","brillo_c_x_ahorro",1.29386641356082
-"Inicial","brillo_c_x_bluetooth",1.72784149466104
-"Corregido (PCA)","pc_hardware",1.0145478265798
-"Corregido (PCA)","log_antiguedad",1.01794573052514
-"Corregido (PCA)","apps_c",1.53340911466151
-"Corregido (PCA)","uso_gps",1.01422723630348
-"Corregido (PCA)","brillo_c",1.90260445706442
-"Corregido (PCA)","ahorro_energia",1.03141460929871
-"Corregido (PCA)","bluetooth",1.01718430588099
-"Corregido (PCA)","modo_oscuro",1.02180415892776
-"Corregido (PCA)","pc_uso",1.01091001542303
-"Corregido (PCA)","temp_c",1.07690388616887
-"Corregido (PCA)","temp_c_cuadrado",1.07252250388823
-"Corregido (PCA)","conectividad_4G",1.17745164800992
-"Corregido (PCA)","conectividad_5G",1.16411768201285
-"Corregido (PCA)","apps_c_x_gps",1.5265654755684
-"Corregido (PCA)","brillo_c_x_ahorro",1.29132284066104
-"Corregido (PCA)","brillo_c_x_bluetooth",1.70289526232822
+"Inicial","conectividad_5G",1.20963274217003
+"Inicial","apps_c_x_gps",1.51194396536017
+"Inicial","brillo_c_x_ahorro",1.29386641356081
+"Inicial","brillo_c_x_bluetooth",1.72784149466106
+"Corregido (PCA)","pc_hardware",1.01224462626393
+"Corregido (PCA)","pc_hardware2",1.01513763154487
+"Corregido (PCA)","log_antiguedad",1.00963982479985
+"Corregido (PCA)","apps_c",1.54547722882888
+"Corregido (PCA)","uso_gps",1.00632052399564
+"Corregido (PCA)","brillo_c",1.8938914509866
+"Corregido (PCA)","ahorro_energia",1.0369744627017
+"Corregido (PCA)","bluetooth",1.0105236473568
+"Corregido (PCA)","modo_oscuro",1.01556308497725
+"Corregido (PCA)","pc_uso",1.00907031708774
+"Corregido (PCA)","temp_c",1.03432505755678
+"Corregido (PCA)","temp_c_cuadrado",1.02585448245356
+"Corregido (PCA)","conectividad_4G",1.22944946025641
+"Corregido (PCA)","conectividad_5G",1.22374758725255
+"Corregido (PCA)","apps_c_x_gps",1.52405331424083
+"Corregido (PCA)","brillo_c_x_ahorro",1.27871720931246
+"Corregido (PCA)","brillo_c_x_bluetooth",1.72639534821746

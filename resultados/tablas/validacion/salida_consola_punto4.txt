@@ -30,7 +30,7 @@ apps_c:uso_gps            -0.2178008  0.0605327  -3.598 0.000337 ***
 brillo_c:ahorro_energia    0.0460032  0.0099023   4.646 3.85e-06 ***
 brillo_c:bluetooth        -0.0006578  0.0080304  -0.082 0.934733    
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 2.435 on 981 degrees of freedom
 Multiple R-squared:  0.8149,	Adjusted R-squared:  0.8115 
@@ -121,17 +121,27 @@ alternative hypothesis: true autocorrelation is not 0
 ========== 2. CORRECCIÓN DE LA MULTICOLINEALIDAD (PCA) ==========
 
 -- Componentes: cargas y proporción de varianza explicada --
-  componente                  variable carga_PC1 varianza_explicada_PC1
- pc_hardware         capacidad_bateria    0.7071                 0.9804
- pc_hardware       resolucion_pantalla    0.7071                 0.9804
-      pc_uso tiempo_pantalla_encendida    0.7071                 0.9784
-      pc_uso            notificaciones    0.7071                 0.9784
+      par componente                  variable   carga varianza_explicada
+ hardware        PC1         capacidad_bateria  0.7071             0.9804
+ hardware        PC1       resolucion_pantalla  0.7071             0.9804
+ hardware        PC2         capacidad_bateria  0.7071             0.0196
+ hardware        PC2       resolucion_pantalla -0.7071             0.0196
+      uso        PC1 tiempo_pantalla_encendida  0.7071             0.9784
+      uso        PC1            notificaciones  0.7071             0.9784
+      uso        PC2 tiempo_pantalla_encendida  0.7071             0.0216
+      uso        PC2            notificaciones -0.7071             0.0216
+
+-- Prueba F de cada segunda componente (H0: no aporta) --
+   componente      F  p_valor               decision
+ pc_hardware2 58.096 5.88e-14    Aporta: se conserva
+      pc_uso2  1.851 1.74e-01 No aporta: se descarta
 
 -- VIF del modelo con componentes --
              variable  VIF
           pc_hardware 1.01
+         pc_hardware2 1.01
        log_antiguedad 1.01
-               apps_c 1.52
+               apps_c 1.53
               uso_gps 1.01
              brillo_c 1.92
        ahorro_energia 1.04
@@ -155,29 +165,29 @@ alternative hypothesis: true autocorrelation is not 0
 	Shapiro-Wilk normality test
 
 data:  res
-W = 0.99716, p-value = 0.07412
+W = 0.99563, p-value = 0.006033
 
 
 	Pearson chi-square normality test
 
 data:  res
-P = 32.192, p-value = 0.3115
+P = 43.84, p-value = 0.038
 
 
 	Asymptotic one-sample Kolmogorov-Smirnov test
 
 data:  as.numeric(scale(res))
-D = 0.021214, p-value = 0.759
+D = 0.024395, p-value = 0.5912
 alternative hypothesis: two-sided
 
-  >> Normalidad: ninguna de las tres pruebas rechaza -> se cumple. 
+  >> Normalidad: al menos una prueba rechaza -> NO se cumple (regla del curso). 
 
 [Insesgados / especificación] H0: la especificación es correcta
 
 	RESET test
 
 data:  modelo_lm
-RESET = 1.5388, df1 = 2, df2 = 981, p-value = 0.2152
+RESET = 1.2547, df1 = 2, df2 = 980, p-value = 0.2856
 
   >> RESET: no se rechaza H0 -> no hay evidencia de problema 
 
@@ -186,7 +196,7 @@ RESET = 1.5388, df1 = 2, df2 = 981, p-value = 0.2152
 	studentized Breusch-Pagan test
 
 data:  aux
-BP = 95.99, df = 16, p-value = 1.944e-13
+BP = 108.95, df = 17, p-value = 1.902e-15
 
   >> Breusch-Pagan: se rechaza H0 -> HAY problema 
 
@@ -195,7 +205,7 @@ BP = 95.99, df = 16, p-value = 1.944e-13
 	Durbin-Watson test
 
 data:  aux
-DW = 2.0715, p-value = 0.2575
+DW = 2.0884, p-value = 0.1618
 alternative hypothesis: true autocorrelation is not 0
 
   >> Durbin-Watson: no se rechaza H0 -> no hay evidencia de problema 
@@ -203,43 +213,65 @@ alternative hypothesis: true autocorrelation is not 0
 
 ========== 3. CORRECCIÓN DE LA HETEROCEDASTICIDAD (WLS) ==========
 
--- Modelo auxiliar ln(e^2) ~ regresoras --
+-- Modelo auxiliar con todas las regresoras (para elegir de qué depende la varianza) --
+
+Call:
+lm(formula = ln_e2 ~ ., data = data.frame(ln_e2 = ln_e2, X_pca))
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-11.9234  -0.9797   0.4689   1.5428   4.2120 
+
+Coefficients:
+                       Estimate Std. Error t value Pr(>|t|)    
+(Intercept)           0.4084080  0.2494840   1.637   0.1019    
+pc_hardware          -0.0656513  0.0501239  -1.310   0.1906    
+pc_hardware2         -0.2102028  0.3556279  -0.591   0.5546    
+log_antiguedad        0.0506986  0.0718835   0.705   0.4808    
+apps_c                0.0373296  0.0316035   1.181   0.2378    
+uso_gps               0.0279109  0.1507667   0.185   0.8532    
+brillo_c              0.0021490  0.0049200   0.437   0.6624    
+ahorro_energia       -0.2823829  0.1653081  -1.708   0.0879 .  
+bluetooth            -0.0434848  0.1422115  -0.306   0.7598    
+modo_oscuro          -0.1299404  0.1440878  -0.902   0.3674    
+pc_uso                0.3379577  0.0503438   6.713 3.22e-11 ***
+temp_c                0.0066441  0.0100788   0.659   0.5099    
+temp_c_cuadrado      -0.0015384  0.0010297  -1.494   0.1355    
+conectividad_4G       0.0910976  0.1543237   0.590   0.5551    
+conectividad_5G       0.0899051  0.2091523   0.430   0.6674    
+apps_c_x_gps         -0.0628407  0.0549188  -1.144   0.2528    
+brillo_c_x_ahorro     0.0063552  0.0089745   0.708   0.4790    
+brillo_c_x_bluetooth  0.0000389  0.0072889   0.005   0.9957    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.21 on 982 degrees of freedom
+Multiple R-squared:  0.05485,	Adjusted R-squared:  0.03849 
+F-statistic: 3.352 on 17 and 982 DF,  p-value: 5.062e-06
+
+
+-- Modelo auxiliar final ln(e^2) ~ pc_uso --
 
 Call:
 lm(formula = ln_e2 ~ ., data = dd_aux)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--11.3114  -0.9314   0.3937   1.4427   3.8139 
+-12.1989  -1.0011   0.5017   1.5529   3.7027 
 
 Coefficients:
-                       Estimate Std. Error t value Pr(>|t|)    
-(Intercept)           0.1811458  0.2415998   0.750   0.4536    
-pc_hardware          -0.0425323  0.0485399  -0.876   0.3811    
-log_antiguedad        0.1365116  0.0696107   1.961   0.0502 .  
-apps_c                0.0162368  0.0305264   0.532   0.5949    
-uso_gps               0.0382039  0.1459989   0.262   0.7936    
-brillo_c              0.0048435  0.0047645   1.017   0.3096    
-ahorro_energia       -0.1355146  0.1600848  -0.847   0.3975    
-bluetooth             0.0164088  0.1376971   0.119   0.9052    
-modo_oscuro           0.1072993  0.1395195   0.769   0.4420    
-pc_uso                0.3108088  0.0487079   6.381  2.7e-10 ***
-temp_c                0.0098721  0.0097566   1.012   0.3119    
-temp_c_cuadrado      -0.0020160  0.0009971  -2.022   0.0435 *  
-conectividad_4G       0.0380904  0.1494403   0.255   0.7989    
-conectividad_5G       0.3074266  0.2025420   1.518   0.1294    
-apps_c_x_gps          0.0152133  0.0531823   0.286   0.7749    
-brillo_c_x_ahorro     0.0017300  0.0086864   0.199   0.8422    
-brillo_c_x_bluetooth -0.0041371  0.0070554  -0.586   0.5578    
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.39229    0.06977   5.623 2.44e-08 ***
+pc_uso       0.33431    0.04990   6.699 3.49e-11 ***
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 2.141 on 983 degrees of freedom
-Multiple R-squared:  0.05446,	Adjusted R-squared:  0.03907 
-F-statistic: 3.539 on 16 and 983 DF,  p-value: 3.011e-06
+Residual standard error: 2.206 on 998 degrees of freedom
+Multiple R-squared:  0.04304,	Adjusted R-squared:  0.04208 
+F-statistic: 44.88 on 1 and 998 DF,  p-value: 3.49e-11
 
 
-Razón entre el mayor y el menor peso: 71.8 
+Razón entre el mayor y el menor peso: 27.2 
 
 == MODELO CORREGIDO (PCA + WLS) ==
 
@@ -248,33 +280,34 @@ lm(formula = formula_pca, data = datos, weights = pesos)
 
 Weighted Residuals:
     Min      1Q  Median      3Q     Max 
--6.2612 -1.2173  0.0413  1.2342  6.2597 
+-5.3791 -1.2779  0.0467  1.2674  6.4554 
 
 Coefficients:
-                          Estimate Std. Error t value Pr(>|t|)    
-(Intercept)             54.0730538  0.2332412 231.833  < 2e-16 ***
-pc_hardware              1.0726408  0.0513347  20.895  < 2e-16 ***
-log(antiguedad_bateria) -1.7742032  0.0664429 -26.703  < 2e-16 ***
-apps_c                  -0.1550765  0.0330536  -4.692 3.09e-06 ***
-uso_gps                 -3.9789868  0.1566756 -25.396  < 2e-16 ***
-brillo_c                -0.0609156  0.0051131 -11.914  < 2e-16 ***
-ahorro_energia           5.1405398  0.1650979  31.136  < 2e-16 ***
-bluetooth               -0.7514562  0.1482997  -5.067 4.82e-07 ***
-modo_oscuro              1.3597623  0.1508446   9.014  < 2e-16 ***
-pc_uso                  -1.8098215  0.0620717 -29.157  < 2e-16 ***
-temp_c                  -0.0700942  0.0095469  -7.342 4.41e-13 ***
-I(temp_c^2)             -0.0241393  0.0009076 -26.598  < 2e-16 ***
-tipo_conectividad4G     -1.6161989  0.1572122 -10.280  < 2e-16 ***
-tipo_conectividad5G     -2.9674577  0.2367875 -12.532  < 2e-16 ***
-apps_c:uso_gps          -0.1961471  0.0576697  -3.401 0.000698 ***
-brillo_c:ahorro_energia  0.0453649  0.0092847   4.886 1.20e-06 ***
-brillo_c:bluetooth       0.0006908  0.0076777   0.090 0.928323    
+                         Estimate Std. Error t value Pr(>|t|)    
+(Intercept)             54.123989   0.249787 216.681  < 2e-16 ***
+pc_hardware              1.038763   0.050422  20.602  < 2e-16 ***
+pc_hardware2             3.276995   0.355306   9.223  < 2e-16 ***
+log(antiguedad_bateria) -1.779417   0.071918 -24.742  < 2e-16 ***
+apps_c                  -0.176053   0.031451  -5.598 2.82e-08 ***
+uso_gps                 -4.035053   0.149788 -26.938  < 2e-16 ***
+brillo_c                -0.063495   0.004875 -13.024  < 2e-16 ***
+ahorro_energia           5.187164   0.164947  31.447  < 2e-16 ***
+bluetooth               -0.765902   0.142284  -5.383 9.17e-08 ***
+modo_oscuro              1.361596   0.143725   9.474  < 2e-16 ***
+pc_uso                  -1.822912   0.061055 -29.857  < 2e-16 ***
+temp_c                  -0.067216   0.010122  -6.640 5.17e-11 ***
+I(temp_c^2)             -0.023977   0.001041 -23.039  < 2e-16 ***
+tipo_conectividad4G     -1.672574   0.155215 -10.776  < 2e-16 ***
+tipo_conectividad5G     -3.050061   0.210297 -14.504  < 2e-16 ***
+apps_c:uso_gps          -0.201200   0.054415  -3.698  0.00023 ***
+brillo_c:ahorro_energia  0.050528   0.009125   5.537 3.95e-08 ***
+brillo_c:bluetooth      -0.002071   0.007309  -0.283  0.77693    
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 1.869 on 983 degrees of freedom
-Multiple R-squared:  0.8275,	Adjusted R-squared:  0.8247 
-F-statistic: 294.7 on 16 and 983 DF,  p-value: < 2.2e-16
+Residual standard error: 1.905 on 982 degrees of freedom
+Multiple R-squared:  0.8271,	Adjusted R-squared:  0.8241 
+F-statistic: 276.3 on 17 and 982 DF,  p-value: < 2.2e-16
 
 
 RESET no se repite para el modelo ponderado: los pesos no cambian la especificación, que ya se evaluó en el modelo con PCA.
@@ -286,19 +319,19 @@ RESET no se repite para el modelo ponderado: los pesos no cambian la especificac
 	Shapiro-Wilk normality test
 
 data:  res
-W = 0.99856, p-value = 0.5972
+W = 0.99856, p-value = 0.5944
 
 
 	Pearson chi-square normality test
 
 data:  res
-P = 23.488, p-value = 0.7538
+P = 24, p-value = 0.7289
 
 
 	Asymptotic one-sample Kolmogorov-Smirnov test
 
 data:  as.numeric(scale(res))
-D = 0.01913, p-value = 0.8577
+D = 0.012179, p-value = 0.9984
 alternative hypothesis: two-sided
 
   >> Normalidad: ninguna de las tres pruebas rechaza -> se cumple. 
@@ -308,21 +341,21 @@ alternative hypothesis: two-sided
 	studentized Breusch-Pagan test
 
 data:  aux
-BP = 39.452, df = 16, p-value = 0.0009355
+BP = 16.014, df = 17, p-value = 0.5229
 
-  >> Breusch-Pagan: se rechaza H0 -> HAY problema 
+  >> Breusch-Pagan: no se rechaza H0 -> no hay evidencia de problema 
 
 [Independencia] H0: no hay autocorrelación de primer orden
 
 	Durbin-Watson test
 
 data:  aux
-DW = 2.0716, p-value = 0.2574
+DW = 2.1056, p-value = 0.0945
 alternative hypothesis: true autocorrelation is not 0
 
   >> Durbin-Watson: no se rechaza H0 -> no hay evidencia de problema 
 
-VIF máximo del modelo final (correlación ponderada): 1.9 
+VIF máximo del modelo final (correlación ponderada): 1.89 
 
 
 ========== 4. COMPARACIÓN INICIAL vs CORREGIDO ==========
@@ -335,17 +368,17 @@ VIF máximo del modelo final (correlación ponderada): 1.9
      Inicial (MCO)   Especificación         RESET de Ramsey      1.2665
      Inicial (MCO) Homocedasticidad           Breusch-Pagan    111.6482
      Inicial (MCO)    Independencia           Durbin-Watson      2.0893
-     Con PCA (MCO)       Normalidad            Shapiro-Wilk      0.9972
-     Con PCA (MCO)       Normalidad Chi cuadrado de Pearson     32.1920
-     Con PCA (MCO)       Normalidad      Kolmogorov-Smirnov      0.0212
-     Con PCA (MCO)   Especificación         RESET de Ramsey      1.5388
-     Con PCA (MCO) Homocedasticidad           Breusch-Pagan     95.9904
-     Con PCA (MCO)    Independencia           Durbin-Watson      2.0715
+     Con PCA (MCO)       Normalidad            Shapiro-Wilk      0.9956
+     Con PCA (MCO)       Normalidad Chi cuadrado de Pearson     43.8400
+     Con PCA (MCO)       Normalidad      Kolmogorov-Smirnov      0.0244
+     Con PCA (MCO)   Especificación         RESET de Ramsey      1.2547
+     Con PCA (MCO) Homocedasticidad           Breusch-Pagan    108.9488
+     Con PCA (MCO)    Independencia           Durbin-Watson      2.0884
  Final (PCA + WLS)       Normalidad            Shapiro-Wilk      0.9986
- Final (PCA + WLS)       Normalidad Chi cuadrado de Pearson     23.4880
- Final (PCA + WLS)       Normalidad      Kolmogorov-Smirnov      0.0191
- Final (PCA + WLS) Homocedasticidad           Breusch-Pagan     39.4520
- Final (PCA + WLS)    Independencia           Durbin-Watson      2.0716
+ Final (PCA + WLS)       Normalidad Chi cuadrado de Pearson     24.0000
+ Final (PCA + WLS)       Normalidad      Kolmogorov-Smirnov      0.0122
+ Final (PCA + WLS) Homocedasticidad           Breusch-Pagan     16.0137
+ Final (PCA + WLS)    Independencia           Durbin-Watson      2.1056
   p_valor                 decision
  6.12e-03 Se rechaza H0 (problema)
  3.59e-02 Se rechaza H0 (problema)
@@ -353,78 +386,80 @@ VIF máximo del modelo final (correlación ponderada): 1.9
  2.82e-01         No se rechaza H0
  1.55e-15 Se rechaza H0 (problema)
  1.58e-01         No se rechaza H0
- 7.41e-02         No se rechaza H0
- 3.12e-01         No se rechaza H0
- 7.59e-01         No se rechaza H0
- 2.15e-01         No se rechaza H0
- 1.94e-13 Se rechaza H0 (problema)
- 2.57e-01         No se rechaza H0
- 5.97e-01         No se rechaza H0
- 7.54e-01         No se rechaza H0
- 8.58e-01         No se rechaza H0
- 9.36e-04 Se rechaza H0 (problema)
- 2.57e-01         No se rechaza H0
+ 6.03e-03 Se rechaza H0 (problema)
+ 3.80e-02 Se rechaza H0 (problema)
+ 5.91e-01         No se rechaza H0
+ 2.86e-01         No se rechaza H0
+ 1.90e-15 Se rechaza H0 (problema)
+ 1.62e-01         No se rechaza H0
+ 5.94e-01         No se rechaza H0
+ 7.29e-01         No se rechaza H0
+ 9.98e-01         No se rechaza H0
+ 5.23e-01         No se rechaza H0
+ 9.45e-02         No se rechaza H0
 
 -- p-valores por prueba y modelo --
                   prueba Inicial (MCO) Con PCA (MCO) Final (PCA + WLS)
-            Shapiro-Wilk      6.12e-03      7.41e-02          0.597000
- Chi cuadrado de Pearson      3.59e-02      3.12e-01          0.754000
-      Kolmogorov-Smirnov      5.90e-01      7.59e-01          0.858000
-         RESET de Ramsey      2.82e-01      2.15e-01                NA
-           Breusch-Pagan      1.55e-15      1.94e-13          0.000936
-           Durbin-Watson      1.58e-01      2.57e-01          0.257000
+            Shapiro-Wilk      6.12e-03      6.03e-03            0.5940
+ Chi cuadrado de Pearson      3.59e-02      3.80e-02            0.7290
+      Kolmogorov-Smirnov      5.90e-01      5.91e-01            0.9980
+         RESET de Ramsey      2.82e-01      2.86e-01                NA
+           Breusch-Pagan      1.55e-15      1.90e-15            0.5230
+           Durbin-Watson      1.58e-01      1.62e-01            0.0945
 
 -- Medidas globales (en el modelo final R2 y sigma son ponderados: no son comparables 1 a 1) --
                medida inicial con_PCA   final
- Número de parámetros 19.0000 17.0000 17.0000
-          R2 ajustado  0.8115  0.8004  0.8247
-   Sigma residual (h)  2.4350  2.5060  1.8690
-           VIF máximo 13.2000  1.9230  1.9030
+ Número de parámetros 19.0000 18.0000 18.0000
+          R2 ajustado  0.8115  0.8113  0.8241
+   Sigma residual (h)  2.4350  2.4360  1.9050
+           VIF máximo 13.2000  1.9230  1.8940
 
 -- Coeficientes: modelo inicial (ini) vs modelo corregido (fin) --
                    termino ini_estimado ini_error_est      ini_p fin_estimado
-               (Intercept)   53.6800000     0.7448000  0.000e+00   54.0700000
+               (Intercept)   53.6800000     0.7448000  0.000e+00    54.120000
          capacidad_bateria    0.0041020     0.0004038  4.064e-23           NA
-   log(antiguedad_bateria)   -1.7540000     0.0792100  1.783e-88   -1.7740000
+   log(antiguedad_bateria)   -1.7540000     0.0792100  1.783e-88    -1.779000
        resolucion_pantalla   -0.0248400     0.0050330  9.451e-07           NA
-                    apps_c   -0.1720000     0.0348200  9.251e-07   -0.1551000
-                   uso_gps   -4.0590000     0.1663000 3.090e-103   -3.9790000
-                  brillo_c   -0.0616300     0.0054210  3.207e-28   -0.0609200
-            ahorro_energia    5.1640000     0.1821000 1.181e-129    5.1410000
-                 bluetooth   -0.7816000     0.1571000  7.712e-07   -0.7515000
-               modo_oscuro    1.2760000     0.1588000  2.720e-15    1.3600000
+                    apps_c   -0.1720000     0.0348200  9.251e-07    -0.176100
+                   uso_gps   -4.0590000     0.1663000 3.090e-103    -4.035000
+                  brillo_c   -0.0616300     0.0054210  3.207e-28    -0.063490
+            ahorro_energia    5.1640000     0.1821000 1.181e-129     5.187000
+                 bluetooth   -0.7816000     0.1571000  7.712e-07    -0.765900
+               modo_oscuro    1.2760000     0.1588000  2.720e-15     1.362000
  tiempo_pantalla_encendida   -0.8554000     0.1377000  7.745e-10           NA
             notificaciones   -0.0635200     0.0180600  4.563e-04           NA
-                    temp_c   -0.0689100     0.0111000  8.047e-10   -0.0700900
-               I(temp_c^2)   -0.0236500     0.0011340  3.606e-80   -0.0241400
-       tipo_conectividad4G   -1.5500000     0.1702000  4.758e-19   -1.6160000
-       tipo_conectividad5G   -3.0110000     0.2305000  4.440e-36   -2.9670000
-            apps_c:uso_gps   -0.2178000     0.0605300  3.366e-04   -0.1961000
-   brillo_c:ahorro_energia    0.0460000     0.0099020  3.851e-06    0.0453600
-        brillo_c:bluetooth   -0.0006578     0.0080300  9.347e-01    0.0006908
-               pc_hardware           NA            NA         NA    1.0730000
-                    pc_uso           NA            NA         NA   -1.8100000
+                    temp_c   -0.0689100     0.0111000  8.047e-10    -0.067220
+               I(temp_c^2)   -0.0236500     0.0011340  3.606e-80    -0.023980
+       tipo_conectividad4G   -1.5500000     0.1702000  4.758e-19    -1.673000
+       tipo_conectividad5G   -3.0110000     0.2305000  4.440e-36    -3.050000
+            apps_c:uso_gps   -0.2178000     0.0605300  3.366e-04    -0.201200
+   brillo_c:ahorro_energia    0.0460000     0.0099020  3.851e-06     0.050530
+        brillo_c:bluetooth   -0.0006578     0.0080300  9.347e-01    -0.002071
+               pc_hardware           NA            NA         NA     1.039000
+              pc_hardware2           NA            NA         NA     3.277000
+                    pc_uso           NA            NA         NA    -1.823000
  fin_error_est      fin_p
-     0.2332000  0.000e+00
+      0.249800  0.000e+00
             NA         NA
-     0.0664400 1.466e-118
+      0.071920 1.967e-105
             NA         NA
-     0.0330500  3.093e-06
-     0.1567000 8.341e-110
-     0.0051130  1.157e-30
-     0.1651000 1.189e-148
-     0.1483000  4.823e-07
-     0.1508000  1.013e-18
+      0.031450  2.819e-08
+      0.149800 4.041e-120
+      0.004875  6.975e-36
+      0.164900 9.928e-151
+      0.142300  9.169e-08
+      0.143700  1.953e-20
             NA         NA
             NA         NA
-     0.0095470  4.407e-13
-     0.0009076 7.470e-118
-     0.1572000  1.289e-23
-     0.2368000  1.564e-33
-     0.0576700  6.979e-04
-     0.0092850  1.201e-06
-     0.0076780  9.283e-01
-     0.0513300  1.624e-80
-     0.0620700 3.572e-135
+      0.010120  5.173e-11
+      0.001041  3.082e-94
+      0.155200  1.143e-25
+      0.210300  2.468e-43
+      0.054410  2.298e-04
+      0.009125  3.949e-08
+      0.007309  7.769e-01
+      0.050420  1.165e-78
+      0.355300  1.719e-19
+      0.061060 6.731e-140
 
 == Tablas en resultados/tablas/validacion y gráficas en resultados/graficas/validacion ==

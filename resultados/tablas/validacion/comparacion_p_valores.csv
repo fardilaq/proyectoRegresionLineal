@@ -1,7 +1,7 @@
 "prueba","Inicial (MCO)","Con PCA (MCO)","Final (PCA + WLS)"
-"Shapiro-Wilk",0.00612,0.0741,0.597
-"Chi cuadrado de Pearson",0.0359,0.312,0.754
-"Kolmogorov-Smirnov",0.59,0.759,0.858
-"RESET de Ramsey",0.282,0.215,NA
-"Breusch-Pagan",1.55e-15,1.94e-13,0.000936
-"Durbin-Watson",0.158,0.257,0.257
+"Shapiro-Wilk",0.00612,0.00603,0.594
+"Chi cuadrado de Pearson",0.0359,0.038,0.729
+"Kolmogorov-Smirnov",0.59,0.591,0.998
+"RESET de Ramsey",0.282,0.286,NA
+"Breusch-Pagan",1.55e-15,1.9e-15,0.523
+"Durbin-Watson",0.158,0.162,0.0945

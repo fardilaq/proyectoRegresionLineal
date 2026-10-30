@@ -4,11 +4,11 @@
 #
 #   Supuesto            Gráfica                Prueba                       Corrección
 #   ------------------  ---------------------  ---------------------------  -------------------------------
-#   Multicolinealidad   (correlación de pares) VIF                          PCA (equivale a promediar)
+#   Multicolinealidad   (correlación de pares) VIF                          PCA (componentes que aportan, prueba F)
 #   Normalidad          Histograma, Q-Q, P-P   Shapiro, Chi cuadrado de     (si no se cumple, se revisa
 #                                              Pearson, Kolmogorov-Smirnov   tras corregir lo demás)
 #   Insesgados          e vs x                 RESET de Ramsey              (agregar términos si rechaza)
-#   Homocedasticidad    e^2 vs x               Breusch-Pagan                MCP/WLS con pesos 1/sigma2_hat
+#   Homocedasticidad    e^2 vs x               Breusch-Pagan                MCP/WLS con pesos 1/sigma2_hat (sigma2 en función de pc_uso)
 #   Independencia       e vs tiempo            Durbin-Watson                Cochrane-Orcutt (solo si rechaza)
 #
 # Orden del script:
@@ -270,34 +270,60 @@ graf_vs_tiempo(res_ini, "Modelo inicial: e vs tiempo (independencia)", "04_inici
 
 # ---------------------------------------------------------------------------
 # 2. CORRECCIÓN DE LA MULTICOLINEALIDAD: PCA
-#    Se condensa cada par colineal en una sola variable (primera componente
-#    principal de las variables estandarizadas). Con dos variables, PCA equivale a
-#    promediar las variables estandarizadas. No se elimina información.
+#    Cada par colineal se reescribe con sus dos componentes principales (variables
+#    estandarizadas): PC1 = (z1 + z2)/sqrt(2) y PC2 = (z1 - z2)/sqrt(2). Las dos
+#    componentes juntas equivalen al par original (no se pierde información) y son
+#    ortogonales, así que no hay multicolinealidad. Se descarta una componente solo
+#    si una prueba F muestra que no aporta (restricción: los dos efectos
+#    estandarizados son iguales).
 # ---------------------------------------------------------------------------
 cat("\n\n========== 2. CORRECCIÓN DE LA MULTICOLINEALIDAD (PCA) ==========\n")
 
 hacer_pc <- function(vars) {
-  pca   <- prcomp(datos[, vars], center = TRUE, scale. = TRUE)
-  signo <- ifelse(sum(pca$rotation[, 1]) < 0, -1, 1)   # cargas positivas: PC alto = valores altos
-  list(pca = pca, signo = signo, vars = vars)
+  pca    <- prcomp(datos[, vars], center = TRUE, scale. = TRUE)
+  signos <- ifelse(pca$rotation[1, ] < 0, -1, 1)   # carga de la 1ª variable positiva en cada componente
+  list(pca = pca, signos = signos, vars = vars)
 }
-puntaje <- function(obj, df) as.numeric(predict(obj$pca, newdata = df[, obj$vars, drop = FALSE])[, 1]) * obj$signo
+puntaje <- function(obj, df, k) {
+  as.numeric(predict(obj$pca, newdata = df[, obj$vars, drop = FALSE])[, k]) * obj$signos[k]
+}
 
 pc_hardware <- hacer_pc(c("capacidad_bateria", "resolucion_pantalla"))
 pc_uso      <- hacer_pc(c("tiempo_pantalla_encendida", "notificaciones"))
-datos$pc_hardware <- puntaje(pc_hardware, datos)
-datos$pc_uso      <- puntaje(pc_uso, datos)
+datos$pc_hardware  <- puntaje(pc_hardware, datos, 1)
+datos$pc_hardware2 <- puntaje(pc_hardware, datos, 2)
+datos$pc_uso       <- puntaje(pc_uso, datos, 1)
+datos$pc_uso2      <- puntaje(pc_uso, datos, 2)
 
-resumen_pc <- do.call(rbind, lapply(list(pc_hardware = pc_hardware, pc_uso = pc_uso), function(o) {
-  data.frame(variable = o$vars, carga_PC1 = round(o$signo * o$pca$rotation[, 1], 4),
-             varianza_explicada_PC1 = round(summary(o$pca)$importance[2, 1], 4), row.names = NULL)
+resumen_pc <- do.call(rbind, lapply(list(hardware = pc_hardware, uso = pc_uso), function(o) {
+  data.frame(variable = rep(o$vars, 2), componente = rep(c("PC1", "PC2"), each = 2),
+             carga = round(as.vector(sweep(o$pca$rotation, 2, o$signos, "*")), 4),
+             varianza_explicada = round(rep(summary(o$pca)$importance[2, ], each = 2), 4),
+             row.names = NULL)
 }))
-resumen_pc$componente <- rep(c("pc_hardware", "pc_uso"), each = 2)
+resumen_pc$par <- rep(c("hardware", "uso"), each = 4)
 cat("\n-- Componentes: cargas y proporción de varianza explicada --\n")
-print(resumen_pc[, c("componente", "variable", "carga_PC1", "varianza_explicada_PC1")], row.names = FALSE)
-write.csv(resumen_pc, file.path(dir_tablas, "pca_componentes.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+print(resumen_pc[, c("par", "componente", "variable", "carga", "varianza_explicada")], row.names = FALSE)
+write.csv(resumen_pc[, c("par", "componente", "variable", "carga", "varianza_explicada")],
+          file.path(dir_tablas, "pca_componentes.csv"), row.names = FALSE, fileEncoding = "UTF-8")
 
-formula_pca <- duracion_bateria ~ pc_hardware + log(antiguedad_bateria) +
+# Modelo con las cuatro componentes (equivale al modelo inicial) y prueba F de cada PC2
+formula_pca_completo <- duracion_bateria ~ pc_hardware + pc_hardware2 + log(antiguedad_bateria) +
+  apps_c * uso_gps + brillo_c * ahorro_energia + brillo_c * bluetooth +
+  modo_oscuro + pc_uso + pc_uso2 + temp_c + I(temp_c^2) + tipo_conectividad
+modelo_pca_completo <- lm(formula_pca_completo, data = datos)
+
+pruebas_comp <- do.call(rbind, lapply(c("pc_hardware2", "pc_uso2"), function(v) {
+  a <- anova(update(modelo_pca_completo, as.formula(paste(". ~ . -", v))), modelo_pca_completo)
+  data.frame(componente = v, F = round(a$F[2], 3), p_valor = signif(a$`Pr(>F)`[2], 3),
+             decision = ifelse(a$`Pr(>F)`[2] < alpha, "Aporta: se conserva", "No aporta: se descarta"))
+}))
+cat("\n-- Prueba F de cada segunda componente (H0: no aporta) --\n")
+print(pruebas_comp, row.names = FALSE)
+write.csv(pruebas_comp, file.path(dir_tablas, "pca_pruebas_componentes.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+
+# Modelo con PCA: se conservan las componentes que aportan según la prueba anterior
+formula_pca <- duracion_bateria ~ pc_hardware + pc_hardware2 + log(antiguedad_bateria) +
   apps_c * uso_gps + brillo_c * ahorro_energia + brillo_c * bluetooth +
   modo_oscuro + pc_uso + temp_c + I(temp_c^2) + tipo_conectividad
 
@@ -318,15 +344,21 @@ evaluar_supuestos("Con PCA (MCO)", residuals(modelo_pca), X_pca, modelo_pca)
 #       ln(e_i^2) = a0 + a1*x1i + ... + ak*xki + w_i
 #       sigma2_hat_i = exp(a0_hat + a1_hat*x1i + ... + ak_hat*xki)
 #       peso_i = 1 / sigma2_hat_i      (se le pasa a lm(weights = ...))
-#    Las x son las regresoras del modelo (las del modelo con PCA).
+#    Las x son las variables de las que depende la varianza. Se mira primero la
+#    regresión auxiliar con todas las regresoras: solo pc_uso resulta significativa,
+#    así que el modelo de varianza final usa únicamente pc_uso.
 # ---------------------------------------------------------------------------
 cat("\n\n========== 3. CORRECCIÓN DE LA HETEROCEDASTICIDAD (WLS) ==========\n")
 
-vars_aux <- colnames(X_pca)     # x1..xk del modelo auxiliar (todas las regresoras)
-dd_aux <- data.frame(ln_e2 = log(residuals(modelo_pca)^2), X_pca[, vars_aux, drop = FALSE])
-stopifnot(all(is.finite(dd_aux$ln_e2)))   # un residuo exactamente 0 daría ln(0) = -Inf
+ln_e2 <- log(residuals(modelo_pca)^2)
+stopifnot(all(is.finite(ln_e2)))   # un residuo exactamente 0 daría ln(0) = -Inf
+cat("\n-- Modelo auxiliar con todas las regresoras (para elegir de qué depende la varianza) --\n")
+print(summary(lm(ln_e2 ~ ., data = data.frame(ln_e2 = ln_e2, X_pca))))
+
+vars_aux <- "pc_uso"            # x del modelo auxiliar final
+dd_aux <- data.frame(ln_e2 = ln_e2, X_pca[, vars_aux, drop = FALSE])
 modelo_aux <- lm(ln_e2 ~ ., data = dd_aux)
-cat("\n-- Modelo auxiliar ln(e^2) ~ regresoras --\n")
+cat("\n-- Modelo auxiliar final ln(e^2) ~ pc_uso --\n")
 print(summary(modelo_aux))
 
 sigma2_hat <- exp(fitted(modelo_aux))
@@ -422,7 +454,8 @@ ggsave(file.path(dir_graficas, "04_vif_antes_despues.png"), g_vif, width = 11, h
 write.csv(df_vif, file.path(dir_tablas, "vif_antes_despues.csv"), row.names = FALSE, fileEncoding = "UTF-8")
 
 # 4.5 Objetos para los puntos siguientes (predicción de escenarios, etc.)
-saveRDS(list(formula = formula_pca, coeficientes = coef(modelo_final), sigma_ponderado = summary(modelo_final)$sigma,
+saveRDS(list(formula = formula_pca, coeficientes = coef(modelo_final), vcov = vcov(modelo_final),
+             sigma_ponderado = summary(modelo_final)$sigma, gl = df.residual(modelo_final),
              pc_hardware = pc_hardware, pc_uso = pc_uso, medias_centrado = medias_centrado,
              modelo_auxiliar = coef(modelo_aux)),
         file.path(dir_tablas, "modelo_corregido_punto4.rds"))
