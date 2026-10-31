@@ -1,10 +1,4 @@
-# 01_analisis_descriptivo.R
-# Análisis descriptivo de los datos.
-#
-# Uso: desde la raíz del repo (directorio de trabajo = raíz),
-#   source("scripts/01_analisis_descriptivo.R")
-# Deja en el entorno: `datos` (1000 dispositivos) y `escenarios`
-# (10 fabricantes), ambos con las categóricas ya convertidas.
+# Análisis descriptivo de los datos
 
 library(readxl)
 library(moments)
@@ -14,7 +8,7 @@ ruta_xlsx <- "datos/DatosProyectoRL_Android_202620.xlsx"
 
 
 # 1. Definición de categorías (una sola vez, se usa en Datos y Escenarios)
-#    El PRIMER nivel de cada factor es la categoría de referencia en lm():
+#    El primer nivel de cada factor es la categoría de referencia en lm():
 #    los coeficientes se leen como diferencia frente a ese nivel.
 #    Son factores NO ordenados (ordered = FALSE): así lm() usa variables
 #    indicadoras (contraste de tratamiento) y no contrastes polinomiales.
@@ -24,12 +18,11 @@ niveles <- list(
   dia_semana        = c("lunes", "martes", "miercoles", "jueves",
                         "viernes", "sabado", "domingo"))
 
-# Variables 0/1: se conservan numéricas (para el modelo) y se crea una
-# copia como factor con sufijo _f (solo para gráficas y tablas).
+# Variables 0/1: Conservamos las numéricas y creamos una
+# copia como factor con sufijo _f (para gráficas y tablas).
 binarias <- c("uso_gps", "ahorro_energia", "bluetooth", "modo_oscuro")
 
-# 2. Función de conversión (la misma para `datos` y `escenarios`,
-#    así predict() siempre encuentra los mismos niveles)
+# 2. Función de conversión así predict() siempre encuentra los mismos niveles)
 preparar_categoricas <- function(df) {
   for (v in names(niveles)) {
     x <- trimws(as.character(df[[v]]))
@@ -59,8 +52,7 @@ escenarios <- preparar_categoricas(escenarios)
 
 # 4. Verificaciones
 stopifnot(
-  nrow(datos) == 1000,
-  !anyNA(datos),
+  nrow(datos) == 1000, !anyNA(datos),
   all(setdiff(names(datos), "duracion_bateria") %in% names(escenarios))
 )
 

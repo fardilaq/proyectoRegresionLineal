@@ -1,11 +1,3 @@
-# 01_datos_con_indicadoras.R
-# Exporta un CSV con los datos listos para regresión: las variables
-# categóricas de texto quedan convertidas en indicadoras 0/1 usando el
-# contraste de tratamiento (el primer nivel es la referencia y se omite),
-# igual que las que ya usa lm() en 01_analisis_descriptivo.R.
-#
-# Uso: desde la raíz del repo,
-#   source("scripts/02_datos_con_indicadoras.R")
 
 library(readxl)
 
